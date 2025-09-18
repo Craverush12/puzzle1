@@ -80,18 +80,8 @@ export function useKioskPerformance() {
       img.decoding = 'async';
     });
 
-    // Preload critical resources
-    const preloadLink = document.createElement('link');
-    preloadLink.rel = 'preload';
-    preloadLink.href = '/Group76.png';
-    preloadLink.as = 'image';
-    document.head.appendChild(preloadLink);
-
-    const preloadLink2 = document.createElement('link');
-    preloadLink2.rel = 'preload';
-    preloadLink2.href = '/Frame21.png';
-    preloadLink2.as = 'image';
-    document.head.appendChild(preloadLink2);
+    // Preload critical resources (only if they're actually used)
+    // Removed unused preloads to fix console warnings
   }, []);
 
   // Memory cleanup

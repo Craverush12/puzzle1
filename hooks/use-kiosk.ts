@@ -105,8 +105,14 @@ export function useKiosk(config: Partial<KioskConfig> = {}) {
   useEffect(() => {
     if (!finalConfig.autoFullscreen || isFullscreen) return;
 
-    const handleFirstInteraction = () => {
-      enterFullscreen();
+    const handleFirstInteraction = async (e: Event) => {
+      // Only attempt fullscreen if it's a direct user interaction
+      try {
+        await enterFullscreen();
+      } catch (error) {
+        console.warn('Fullscreen not available or blocked:', error);
+      }
+      
       // Remove listeners after first interaction
       document.removeEventListener('click', handleFirstInteraction);
       document.removeEventListener('touchstart', handleFirstInteraction);

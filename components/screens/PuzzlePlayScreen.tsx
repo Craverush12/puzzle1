@@ -119,7 +119,11 @@ export default function PuzzlePlayScreen() {
   const handleStart = (e: React.MouseEvent | React.TouchEvent, piece: JigsawPiece) => {
     if (isComplete) return;
     
-    e.preventDefault();
+    // Only prevent default for touch events, not mouse events
+    if ('touches' in e) {
+      e.preventDefault();
+    }
+    
     const boardRect = boardRef.current?.getBoundingClientRect();
     
     if (!boardRect) return;
@@ -147,7 +151,11 @@ export default function PuzzlePlayScreen() {
   const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!draggedPiece) return;
     
-    e.preventDefault();
+    // Only prevent default for touch events, not mouse events
+    if ('touches' in e) {
+      e.preventDefault();
+    }
+    
     const boardRect = boardRef.current?.getBoundingClientRect();
     
     if (!boardRect) return;
@@ -170,7 +178,10 @@ export default function PuzzlePlayScreen() {
   const handleEnd = (e: React.MouseEvent | React.TouchEvent) => {
     if (!draggedPiece) return;
     
-    e.preventDefault();
+    // Only prevent default for touch events, not mouse events
+    if ('touches' in e) {
+      e.preventDefault();
+    }
     
     // Check if piece is near correct position using proper collision detection
     if (isPieceInCorrectPosition(draggedPiece, jigsawConfig, 30)) {

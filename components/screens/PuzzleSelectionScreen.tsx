@@ -8,9 +8,10 @@ export default function PuzzleSelectionScreen() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
 
   const handleDifficultySelect = (difficulty: 'easy' | 'medium' | 'hard') => {
+    console.log('Difficulty selected:', difficulty); // Debug log
     setSelectedDifficulty(difficulty);
     // Automatically start the puzzle when a difficulty is selected
-    setUserSession({ selectedDifficulty });
+    setUserSession({ selectedDifficulty: difficulty });
     setCurrentScreen('puzzlePlay');
   };
 
@@ -31,22 +32,15 @@ export default function PuzzleSelectionScreen() {
             <button
               key={difficulty}
               onClick={() => handleDifficultySelect(difficulty)}
-              className="transform hover:scale-105 transition-all duration-200 active:scale-95 relative"
+              className={`transform hover:scale-105 transition-all duration-200 active:scale-95 relative border-2 rounded-2xl px-6 py-4 ${
+                isSelected 
+                  ? 'border-teal-400 bg-teal-800/50' 
+                  : 'border-gray-400 bg-gray-800/30 hover:border-teal-300'
+              }`}
             >
-              <div 
-                className="w-auto h-16 md:h-20 rounded-2xl flex items-center justify-center px-6"
-                style={{
-                  backgroundColor: isSelected ? '#002124' : 'transparent',
-                  backgroundImage: isSelected ? 'none' : 'url(/ez.png)',
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center'
-                }}
-              >
-                <span className="text-white font-bold text-lg">
-                  {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-                </span>
-              </div>
+              <span className="text-white font-bold text-lg">
+                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+              </span>
             </button>
           );
         })}
