@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAppContext, LeaderboardEntry } from '@/components/AppProvider';
 import { getLeaderboard } from '@/lib/supabase';
-import { formatTime, getScoreGrade } from '@/lib/scoring';
+import { formatTime, getScoreGrade, calculateScore } from '@/lib/scoring';
 import Image from 'next/image';
 
 export default function LeaderboardScreen() {
@@ -32,60 +32,60 @@ export default function LeaderboardScreen() {
   };
 
   return (
-    <div className="kiosk-container flex flex-col p-6" style={{ backgroundColor: '#004F53' }}>
+    <div className="kiosk-container flex flex-col justify-center p-6" style={{ backgroundColor: '#003437' }}>
       <div className="text-center mb-6">
-        <h1 className="text-4xl md:text-5xl font-medium text-white mb-3">
+        <h1 className="text-3xl md:text-4xl font-medium text-white mb-3">
           Leaderboard
         </h1>
       </div>
 
-      <div className="flex-1 max-w-2xl mx-auto w-full overflow-y-auto">
+      <div className="max-w-lg mx-auto w-full overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center h-32">
             <div className="text-xl text-white">Loading leaderboard...</div>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="bg-gradient-to-r from-emerald-500 to-blue-500 text-white p-4">
-              <div className="grid grid-cols-3 gap-2 text-lg md:text-xl font-bold">
-                <div>Name</div>
-                <div>City</div>
-                <div>Time</div>
+          <div className="bg-[#004F53] rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-[#004F53] text-white p-3">
+              <div className="grid grid-cols-12 gap-1 text-base md:text-lg font-normal">
+                <div className="col-span-5">Name</div>
+                <div className="col-span-4">City</div>
+                <div className="col-span-3 text-right">Points</div>
               </div>
             </div>
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-400">
               {leaderboard.length === 0 ? (
-                <div className="p-6 text-center text-lg text-gray-500">
+                <div className="p-6 text-center text-lg text-gray-300">
                   No scores yet. Be the first to play!
                 </div>
               ) : (
                 leaderboard.slice(0, 10).map((entry, index) => {
                   return (
-                    <div key={entry.id || index} className="p-4 hover:bg-gray-50">
-                      <div className="grid grid-cols-3 gap-2 text-base md:text-lg items-center">
-                        <div className="flex items-center space-x-3">
+                    <div key={entry.id || index} className="p-2 hover:bg-gray-600">
+                      <div className="grid grid-cols-12 gap-1 text-sm md:text-base items-center">
+                        <div className="col-span-5 flex items-center space-x-2">
                           <div className="flex items-center justify-center w-8 h-8">
                             {index === 0 ? (
-                              <Image src="/gold.svg" alt="Gold Medal" width={32} height={32} />
+                              <img src="/gold.svg" alt="Gold Medal" width={24} height={24} />
                             ) : index === 1 ? (
-                              <Image src="/silver.png" alt="Silver Medal" width={32} height={32} />
+                              <img src="/silver.png" alt="Silver Medal" width={24} height={24} />
                             ) : index === 2 ? (
-                              <Image src="/bronze.png" alt="Bronze Medal" width={32} height={32} />
+                              <img src="/bronze.png" alt="Bronze Medal" width={24} height={24} />
                             ) : (
-                              <span className="text-xl md:text-2xl font-bold text-emerald-600">
+                              <span className="text-lg md:text-xl font-normal text-white">
                                 {index + 1}
                               </span>
                             )}
                           </div>
-                          <div className="font-semibold text-gray-800">
+                          <div className="font-normal text-white">
                             {entry.name}
                           </div>
                         </div>
-                        <div className="font-semibold text-gray-800">
+                        <div className="col-span-4 font-normal text-white">
                           {entry.city || 'Unknown'}
                         </div>
-                        <div className="font-bold text-blue-600">
-                          {formatTime(entry.time)}
+                        <div className="col-span-3 font-normal text-white text-right">
+                          {calculateScore(entry.time, entry.difficulty)}
                         </div>
                       </div>
                     </div>
@@ -97,7 +97,7 @@ export default function LeaderboardScreen() {
         )}
       </div>
 
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center mt-4">
         <button
           onClick={handleHome}
           className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white text-xl font-bold py-3 px-8 rounded-2xl transition-colors border border-teal-700 shadow-lg flex items-center space-x-2"
