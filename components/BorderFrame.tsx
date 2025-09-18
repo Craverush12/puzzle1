@@ -15,25 +15,24 @@ export default function BorderFrame({ children }: BorderFrameProps) {
       const height = window.innerHeight;
       const aspectRatio = width / height;
       
-      // Determine if this is a kiosk screen (not desktop)
-      // Based on the design requirements, we apply borders for screens with certain ratios
+      // Ratio-based detection for kiosk vs desktop screens
       // Desktop screens typically have aspect ratios around 16:9 (1.78) or 16:10 (1.6)
       // Kiosk screens are typically more square or vertical
       
-      // More precise detection for kiosk vs desktop
-      const isDesktop = (aspectRatio >= 1.6 && width >= 1200) || 
-                       (aspectRatio >= 1.4 && width >= 1600); // Desktop screens
+      // Define ratio thresholds
+      const DESKTOP_RATIO_THRESHOLD = 1.5; // 3:2 ratio and wider
+      const KIOSK_RATIO_THRESHOLD = 1.3;   // 4:3 ratio and narrower
       
-      // Apply borders for kiosk screens (tablets, vertical displays, etc.)
-      // For testing, let's be more permissive with border display
-      const isKiosk = !isDesktop && (
-        width <= 1024 || // Small screens
-        aspectRatio <= 1.4 || // Vertical or square screens (increased from 1.3)
-        height > width || // Portrait orientation
-        width <= 1366 // Medium screens should also show borders
-      );
+      // Determine screen type based primarily on aspect ratio
+      const isDesktopRatio = aspectRatio >= DESKTOP_RATIO_THRESHOLD;
+      const isKioskRatio = aspectRatio <= KIOSK_RATIO_THRESHOLD;
+      const isPortrait = height > width;
       
-      setShouldShowBorder(isKiosk);
+      // Show border for kiosk-style screens (square, vertical, or portrait)
+      // This includes tablets, vertical displays, and portrait orientations
+      const shouldShow = isKioskRatio || isPortrait || !isDesktopRatio;
+      
+      setShouldShowBorder(shouldShow);
     };
 
     checkScreenRatio();
@@ -67,7 +66,10 @@ export default function BorderFrame({ children }: BorderFrameProps) {
           backgroundRepeat: 'no-repeat',
           zIndex: 1,
           pointerEvents: 'none',
-          opacity: 0.9
+          opacity: 1, // Increased from 0.9 for debugging
+          // Debug: Add a temporary background color to see if element is there
+          backgroundColor: 'rgba(255, 0, 0, 0.1)', // Very light red tint
+          border: '2px solid red' // Temporary red border to see the element
         }}
       />
       

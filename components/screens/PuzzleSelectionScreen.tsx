@@ -16,7 +16,7 @@ export default function PuzzleSelectionScreen() {
 
 
   return (
-    <div className="min-h-screen bg-teal-900 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ backgroundColor: 'var(--background-primary)' }}>
       {/* Title */}
       <h1 className="text-white text-3xl font-bold mb-8">
         Select the Puzzle

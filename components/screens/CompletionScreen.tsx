@@ -27,7 +27,7 @@ export default function CompletionScreen() {
 
 
   return (
-    <div className="min-h-screen bg-teal-900 flex flex-col items-center justify-center p-4 relative">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative" style={{ backgroundColor: 'var(--background-primary)' }}>
       {/* Background SVG */}
       <div className="absolute inset-0 opacity-30">
         <img src="/Group.svg" alt="" className="w-full h-full object-cover" />
