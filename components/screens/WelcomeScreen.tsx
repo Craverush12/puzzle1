@@ -13,9 +13,13 @@ export default function WelcomeScreen() {
 
       <button
         onClick={() => setCurrentScreen('userInfo')}
-        className="individual-button text-3xl md:text-4xl font-bold py-6 px-12 md:py-8 md:px-16 rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-200 active:scale-95"
+        className="transform hover:scale-105 transition-all duration-200 active:scale-95"
       >
-        Begin
+        <img 
+          src="/begin.png" 
+          alt="Begin" 
+          className="w-auto h-20 md:h-24"
+        />
       </button>
       
       <p className="text-white text-lg md:text-xl mt-4">

@@ -2,16 +2,11 @@
 
 import { useAppContext } from '@/components/AppProvider';
 import { submitScore } from '@/lib/supabase';
+import { formatTime } from '@/lib/scoring';
 
 export default function CompletionScreen() {
   const { setCurrentScreen, userSession, resetSession } = useAppContext();
 
-  const formatTime = (ms: number) => {
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
 
   const handleViewLeaderboard = async () => {
     // Submit score to leaderboard
@@ -19,8 +14,9 @@ export default function CompletionScreen() {
       await submitScore({
         name: userSession.name,
         city: userSession.city as 'Jeddah' | 'Riyadh',
-        puzzle_id: userSession.selectedPuzzle?.id || 'unknown',
+        difficulty: userSession.selectedDifficulty,
         completion_time: userSession.completionTime,
+        score: userSession.score,
       });
     } catch (error) {
       console.error('Error submitting score:', error);
@@ -29,39 +25,59 @@ export default function CompletionScreen() {
     setCurrentScreen('leaderboard');
   };
 
-  const handlePlayAgain = () => {
-    resetSession();
-  };
 
   return (
-    <div className="kiosk-container flex flex-col items-center justify-center p-6">
-      <div className="text-center mb-8">
-        <h1 className="text-5xl md:text-6xl font-bold text-emerald-600 mb-6">
-          🎉 Congratulations! 🎉
-        </h1>
-        <p className="text-2xl md:text-3xl text-gray-700 mb-4">
-          Well done, {userSession.name}!
-        </p>
-        <p className="text-xl md:text-2xl text-gray-600 mb-3">
-          You completed the puzzle in
-        </p>
-        <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-6">
-          {formatTime(userSession.completionTime)}
+    <div className="min-h-screen bg-teal-900 flex flex-col items-center justify-center p-4 relative">
+      {/* Background SVG */}
+      <div className="absolute inset-0 opacity-30">
+        <img src="/Group.svg" alt="" className="w-full h-full object-cover" />
+      </div>
+
+      {/* Decorative Border - Triple Line */}
+      <div className="absolute inset-0 border-4 border-teal-600">
+        <div className="absolute inset-4 border-4 border-teal-700">
+          <div className="absolute inset-4 border-4 border-teal-500"></div>
         </div>
       </div>
 
-      <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-6">
+      {/* Top Section - Simple Fireworks */}
+      <div className="absolute top-16 left-1/2 transform -translate-x-1/2">
+        <div className="text-white text-4xl">*</div>
+        <div className="absolute top-2 left-2 w-1 h-1 bg-white rounded-full opacity-60"></div>
+        <div className="absolute top-3 right-2 w-1 h-1 bg-white rounded-full opacity-60"></div>
+      </div>
+
+      {/* Main Content */}
+      <div className="text-center z-10">
+        <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+          Congratulation
+        </h1>
+        <p className="text-xl md:text-2xl text-white mb-8">
+          Together we celebrate the pride of Saudi Arabia
+        </p>
+        
+        {/* Score Display - Exact match to design */}
+        <div className="bg-teal-800 rounded-2xl p-6 mb-8 max-w-sm mx-auto">
+          <div className="text-center">
+            <div className="text-4xl font-bold text-white mb-2">
+              {userSession.score} Points
+            </div>
+            <div className="text-lg text-teal-200">
+              {formatTime(userSession.completionTime)} • {userSession.selectedDifficulty.toUpperCase()}
+            </div>
+          </div>
+        </div>
+
+        {/* Leaderboard Button - Exact match to design */}
         <button
           onClick={handleViewLeaderboard}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white text-2xl md:text-3xl font-bold py-4 px-8 md:py-6 md:px-12 rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-200 active:scale-95"
+          className="transform hover:scale-105 transition-all duration-200 active:scale-95"
         >
-          View Leaderboard
-        </button>
-        <button
-          onClick={handlePlayAgain}
-          className="bg-blue-500 hover:bg-blue-600 text-white text-2xl md:text-3xl font-bold py-4 px-8 md:py-6 md:px-12 rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-200 active:scale-95"
-        >
-          Play Again
+          <img 
+            src="/Leaderboard.png" 
+            alt="Leaderboard" 
+            className="w-auto h-16 md:h-20"
+          />
         </button>
       </div>
     </div>

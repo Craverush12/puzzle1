@@ -14,8 +14,9 @@ const supabase = supabaseUrl && supabaseKey
 export interface ScoreSubmission {
   name: string;
   city: 'Jeddah' | 'Riyadh';
-  puzzle_id: string;
+  difficulty: 'easy' | 'medium' | 'hard';
   completion_time: number; // in milliseconds
+  score: number;
 }
 
 export async function submitScore(entry: ScoreSubmission): Promise<void> {
@@ -29,8 +30,9 @@ export async function submitScore(entry: ScoreSubmission): Promise<void> {
         .insert([{
           name: entry.name,
           city: entry.city,
-          puzzle_id: entry.puzzle_id,
-          completion_time: entry.completion_time
+          difficulty: entry.difficulty,
+          completion_time: entry.completion_time,
+          score: entry.score
         }]);
       
       if (error) {
@@ -48,9 +50,12 @@ export async function submitScore(entry: ScoreSubmission): Promise<void> {
   // Fallback to localStorage
   const existingScores = getStoredScores();
   const newEntry: LeaderboardEntry = {
-    ...entry,
     id: Date.now(),
+    name: entry.name,
+    city: entry.city,
+    difficulty: entry.difficulty,
     time: entry.completion_time,
+    score: entry.score,
     completed_at: new Date().toISOString(),
   };
   
@@ -68,7 +73,7 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
       const { data, error } = await supabase
         .from('leaderboard')
         .select('*')
-        .order('completion_time', { ascending: true })
+        .order('score', { ascending: false })
         .limit(10);
       
       if (error) {
@@ -81,7 +86,9 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
         id: row.id,
         name: row.name,
         city: row.city,
+        difficulty: row.difficulty,
         time: row.completion_time,
+        score: row.score,
         completed_at: row.created_at
       }));
       
@@ -94,7 +101,7 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
   
   // Fallback to localStorage
   const scores = getStoredScores();
-  return scores.sort((a, b) => a.time - b.time);
+  return scores.sort((a, b) => b.score - a.score);
 }
 
 // Helper function for localStorage fallback

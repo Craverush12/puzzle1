@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppContext } from '@/components/AppProvider';
 import VirtualKeyboard from '@/components/VirtualKeyboard';
 
@@ -14,8 +14,27 @@ export default function UserInfoScreen() {
   const [city, setCity] = useState('');
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [activeInput, setActiveInput] = useState<'name' | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const handleNameFocus = () => {
+  // Detect mobile screens
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileScreen = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      setIsMobile(isMobileScreen);
+      
+      // Always show keyboard on mobile
+      if (isMobileScreen) {
+        setShowKeyboard(true);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleNameClick = () => {
     setActiveInput('name');
     setShowKeyboard(true);
   };
@@ -34,8 +53,8 @@ export default function UserInfoScreen() {
   };
 
   return (
-    <div className="kiosk-container flex flex-col p-6">
-      <div className="flex-1 flex flex-col items-center justify-center max-w-xl mx-auto w-full">
+    <div className={`kiosk-container flex flex-col p-6 pb-0 ${showKeyboard ? 'keyboard-visible' : ''}`}>
+      <div className="flex-1 flex flex-col items-center justify-center max-w-xl mx-auto w-full mb-4">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">
           Enter your info
         </h1>
@@ -48,10 +67,14 @@ export default function UserInfoScreen() {
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              onFocus={handleNameFocus}
-              className="w-full text-2xl md:text-3xl p-4 md:p-6 border-4 border-gray-300 rounded-2xl focus:border-emerald-500 focus:outline-none bg-white shadow-lg text-black"
-              placeholder="Enter your name"
+              readOnly
+              onClick={handleNameClick}
+              className={`w-full text-2xl md:text-3xl p-4 md:p-6 border-4 rounded-2xl focus:outline-none shadow-lg text-black cursor-pointer transition-all ${
+                activeInput === 'name' 
+                  ? 'border-emerald-500 bg-emerald-50' 
+                  : 'border-gray-300 bg-white hover:border-emerald-300'
+              }`}
+              placeholder="Click here to enter your name"
             />
           </div>
 
@@ -59,18 +82,27 @@ export default function UserInfoScreen() {
             <label className="block text-2xl md:text-3xl font-semibold text-white mb-3">
               City
             </label>
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="w-full text-2xl md:text-3xl p-4 md:p-6 border-4 border-gray-300 rounded-2xl focus:border-emerald-500 focus:outline-none bg-white shadow-lg text-black"
-            >
-              <option value="">Choose your city</option>
+            <div className="grid grid-cols-2 gap-4">
               {cities.map(cityName => (
-                <option key={cityName} value={cityName}>
+                <button
+                  key={cityName}
+                  onClick={() => setCity(cityName)}
+                  className={`kiosk-button text-2xl md:text-3xl p-4 md:p-6 border-4 rounded-2xl transition-all shadow-lg font-semibold ${
+                    city === cityName
+                      ? 'border-emerald-500 bg-emerald-100 text-emerald-800'
+                      : 'border-gray-300 bg-white text-black hover:border-emerald-300 hover:bg-emerald-50'
+                  }`}
+                >
                   {cityName}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
+            {city && (
+              <div className="mt-3 text-center">
+                <span className="text-xl text-white">Selected: </span>
+                <span className="text-xl font-bold text-emerald-400">{city}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -81,6 +113,7 @@ export default function UserInfoScreen() {
           >
             Back
           </button>
+          
           <button
             onClick={handleContinue}
             disabled={!name.trim() || !city}
@@ -91,11 +124,19 @@ export default function UserInfoScreen() {
         </div>
       </div>
 
+      {/* Virtual keyboard - always visible on mobile, toggle on desktop */}
       {showKeyboard && (
         <VirtualKeyboard
           onKeyPress={handleKeyboardInput}
-          onClose={() => setShowKeyboard(false)}
+          onClose={() => {
+            setActiveInput(null);
+            // Only close keyboard on desktop, keep it open on mobile
+            if (!isMobile) {
+              setShowKeyboard(false);
+            }
+          }}
           currentValue={name}
+          showCloseButton={!isMobile}
         />
       )}
     </div>

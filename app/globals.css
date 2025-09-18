@@ -12,6 +12,11 @@
     --individual-button-bg: #00A0A0;
     --font-family: "IBM Plex Sans", sans-serif;
     
+    /* Keyboard Design System Colors */
+    --keyboard-bg: #001E27;
+    --keyboard-action-keys: #005E60;
+    --keyboard-other-keys: #003437;
+    
     /* Legacy shadcn variables for compatibility */
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -86,6 +91,10 @@ html, body {
   /* Optimize for vertical kiosk orientation */
   width: 100vw;
   max-width: 100vw;
+  /* Touch optimization for kiosk */
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Hide scrollbars */
@@ -113,66 +122,20 @@ html, body {
   background-color: var(--background-primary);
 }
 
-/* Border Pattern System */
-:root {
-  --border-height: 60px;
-  --border-width: 80px;
+/* Border Frame System */
+.border-frame-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* Top Border */
-.border-top {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--border-height);
-  background-image: url('/Group76.png');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-position: center;
-  z-index: 10;
+.border-frame-bg {
+  /* Border background is handled inline for dynamic sizing */
 }
 
-/* Bottom Border - Same image as top */
-.border-bottom {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: var(--border-height);
-  background-image: url('/Group76.png');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-position: center;
-  z-index: 10;
-}
-
-/* Left Border - Vertical pattern */
-.border-left {
-  position: fixed;
-  left: 0;
-  top: var(--border-height);
-  bottom: var(--border-height);
-  width: var(--border-width);
-  background-image: url('/Frame21.png');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-position: center;
-  z-index: 10;
-}
-
-/* Right Border - Same vertical pattern as left */
-.border-right {
-  position: fixed;
-  right: 0;
-  top: var(--border-height);
-  bottom: var(--border-height);
-  width: var(--border-width);
-  background-image: url('/Frame21.png');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-position: center;
-  z-index: 10;
+.border-frame-content {
+  /* Content area styling is handled inline for proper layering */
 }
 
 /* Content area - no border spacing */
@@ -192,6 +155,11 @@ html, body {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  /* Kiosk touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 60px;
+  min-height: 60px;
 }
 
 .puzzle-piece:hover {
@@ -244,12 +212,51 @@ html, body {
   border-radius: var(--keyboard-button-radius);
   color: var(--text-primary);
   font-family: var(--font-family);
+  /* Kiosk touch optimization */
+  min-height: 60px;
+  min-width: 120px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer !important; /* Ensure mouse cursor works */
+  pointer-events: auto !important; /* Ensure mouse events work */
 }
 
 .individual-button {
   background-color: var(--individual-button-bg);
   color: var(--text-primary);
   font-family: var(--font-family);
+  /* Kiosk touch optimization */
+  min-height: 60px;
+  min-width: 120px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer !important; /* Ensure mouse cursor works */
+  pointer-events: auto !important; /* Ensure mouse events work */
+}
+
+/* Kiosk-specific button enhancements */
+.kiosk-button {
+  min-height: 80px;
+  min-width: 160px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 16px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer !important; /* Ensure mouse cursor works */
+  pointer-events: auto !important; /* Ensure mouse events work */
+}
+
+.kiosk-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.kiosk-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Text styling */
@@ -272,4 +279,269 @@ input, select, textarea {
 /* Placeholder text */
 input::placeholder, textarea::placeholder {
   color: #666666 !important;
+}
+
+/* Puzzle breaking animation */
+@keyframes puzzleBreak {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.05) rotate(1deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.1) rotate(-1deg);
+    opacity: 0.7;
+  }
+  75% {
+    transform: scale(0.95) rotate(0.5deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+/* Kiosk Responsive Scaling */
+:root {
+  --kiosk-scale: 1;
+  --kiosk-width: 100vw;
+  --kiosk-height: 100vh;
+  --kiosk-aspect-ratio: 1;
+}
+
+/* Small kiosk (tablet size) */
+.kiosk-small {
+  font-size: calc(1rem * var(--kiosk-scale));
+}
+
+.kiosk-small .kiosk-button {
+  min-height: calc(60px * var(--kiosk-scale));
+  min-width: calc(120px * var(--kiosk-scale));
+  font-size: calc(1.2rem * var(--kiosk-scale));
+}
+
+.kiosk-small .puzzle-piece {
+  min-width: calc(50px * var(--kiosk-scale));
+  min-height: calc(50px * var(--kiosk-scale));
+}
+
+/* Medium kiosk */
+.kiosk-medium {
+  font-size: calc(1.1rem * var(--kiosk-scale));
+}
+
+.kiosk-medium .kiosk-button {
+  min-height: calc(70px * var(--kiosk-scale));
+  min-width: calc(140px * var(--kiosk-scale));
+  font-size: calc(1.4rem * var(--kiosk-scale));
+}
+
+.kiosk-medium .puzzle-piece {
+  min-width: calc(60px * var(--kiosk-scale));
+  min-height: calc(60px * var(--kiosk-scale));
+}
+
+/* Large kiosk */
+.kiosk-large {
+  font-size: calc(1.2rem * var(--kiosk-scale));
+}
+
+.kiosk-large .kiosk-button {
+  min-height: calc(80px * var(--kiosk-scale));
+  min-width: calc(160px * var(--kiosk-scale));
+  font-size: calc(1.6rem * var(--kiosk-scale));
+}
+
+.kiosk-large .puzzle-piece {
+  min-width: calc(70px * var(--kiosk-scale));
+  min-height: calc(70px * var(--kiosk-scale));
+}
+
+/* Extra large kiosk */
+.kiosk-extra-large {
+  font-size: calc(1.3rem * var(--kiosk-scale));
+}
+
+.kiosk-extra-large .kiosk-button {
+  min-height: calc(90px * var(--kiosk-scale));
+  min-width: calc(180px * var(--kiosk-scale));
+  font-size: calc(1.8rem * var(--kiosk-scale));
+}
+
+.kiosk-extra-large .puzzle-piece {
+  min-width: calc(80px * var(--kiosk-scale));
+  min-height: calc(80px * var(--kiosk-scale));
+}
+
+/* Vertical orientation adjustments */
+.kiosk-vertical {
+  /* Adjust spacing for vertical screens */
+}
+
+.kiosk-vertical .kiosk-button {
+  margin: calc(8px * var(--kiosk-scale)) 0;
+}
+
+.kiosk-vertical .puzzle-piece {
+  margin: calc(4px * var(--kiosk-scale));
+}
+
+/* Horizontal orientation adjustments */
+.kiosk-horizontal {
+  /* Adjust spacing for horizontal screens */
+}
+
+.kiosk-horizontal .kiosk-button {
+  margin: 0 calc(8px * var(--kiosk-scale));
+}
+
+.kiosk-horizontal .puzzle-piece {
+  margin: calc(4px * var(--kiosk-scale));
+}
+
+/* Virtual Keyboard Styles - Matching Design Specifications */
+.virtual-keyboard {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999 !important;
+  background-color: #001E27 !important; /* bg - 001E27 */
+  border-top: 2px solid #005E60;
+  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+  pointer-events: auto !important; /* Ensure mouse events work */
+}
+
+/* Base keyboard key styling - other keys */
+.keyboard-key {
+  background-color: #003437 !important; /* other keys - 003437 */
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 1.1rem !important;
+  font-weight: 500 !important;
+  min-height: 48px !important;
+  min-width: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+  cursor: pointer !important; /* Ensure mouse cursor works */
+  pointer-events: auto !important; /* Ensure mouse events work */
+}
+
+.keyboard-key:hover {
+  background-color: #004A4D !important; /* Slightly lighter for hover */
+  transform: scale(1.02) !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+.keyboard-key:active {
+  transform: scale(0.98) !important;
+  background-color: #002A2D !important; /* Slightly darker for active */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Action keys styling - action keys - 005E60 */
+.shift-key,
+.backspace-key,
+.number-key,
+.mic-key,
+.space-key,
+.enter-key {
+  background-color: #005E60 !important; /* action keys - 005E60 */
+}
+
+.shift-key:hover,
+.backspace-key:hover,
+.number-key:hover,
+.mic-key:hover,
+.space-key:hover,
+.enter-key:hover {
+  background-color: #006A6D !important; /* Slightly lighter for hover */
+}
+
+.shift-key:active,
+.backspace-key:active,
+.number-key:active,
+.mic-key:active,
+.space-key:active,
+.enter-key:active {
+  background-color: #004A4D !important; /* Slightly darker for active */
+}
+
+/* Special key styling */
+.shift-key.active {
+  background-color: #006A6D !important; /* Active state for shift */
+}
+
+.space-key {
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+}
+
+/* Ensure keyboard is always visible */
+.virtual-keyboard {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Responsive adjustments for vertical orientation */
+@media (max-width: 768px) {
+  .keyboard-key {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    font-size: 1rem !important;
+  }
+  
+  .virtual-keyboard {
+    padding: 8px !important;
+  }
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+  .keyboard-key {
+    min-height: 52px !important;
+    min-width: 52px !important;
+    font-size: 1.2rem !important;
+  }
+}
+
+/* Ensure content doesn't overlap with keyboard */
+.kiosk-container {
+  padding-bottom: 0 !important;
+}
+
+/* Ensure all interactive elements work with mouse */
+button, input, select, textarea, [role="button"] {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure mouse interactions work on all screen sizes */
+@media (max-width: 768px) {
+  button, input, select, textarea, [role="button"] {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Add bottom padding to content when keyboard is visible */
+.keyboard-visible {
+  padding-bottom: 280px !important; /* Space for keyboard */
+}
+
+@media (max-width: 768px) {
+  .keyboard-visible {
+    padding-bottom: 240px !important; /* Smaller space on mobile */
+  }
 }

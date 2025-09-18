@@ -11,20 +11,31 @@ export interface Puzzle {
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
+export interface PuzzleConfig {
+  difficulty: 'easy' | 'medium' | 'hard';
+  gridSize: number;
+  pieceSize: number;
+  tabSize: number;
+  tabDepth: number;
+}
+
 export interface UserSession {
   name: string;
   city: string;
-  selectedPuzzle: Puzzle | null;
+  selectedDifficulty: 'easy' | 'medium' | 'hard';
   startTime: number;
   endTime: number;
   completionTime: number;
+  score: number;
 }
 
 export interface LeaderboardEntry {
   id?: number;
   name: string;
   city: string;
+  difficulty: 'easy' | 'medium' | 'hard';
   time: number;
+  score: number;
   completed_at?: string;
 }
 
@@ -41,10 +52,11 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 const initialUserSession: UserSession = {
   name: '',
   city: '',
-  selectedPuzzle: null,
+  selectedDifficulty: 'medium',
   startTime: 0,
   endTime: 0,
   completionTime: 0,
+  score: 0,
 };
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -80,3 +92,36 @@ export function useAppContext() {
   }
   return context;
 }
+
+// Difficulty configurations
+export const DIFFICULTY_CONFIGS: Record<string, PuzzleConfig> = {
+  easy: { 
+    difficulty: 'easy', 
+    gridSize: 3, 
+    pieceSize: 100, 
+    tabSize: 0, 
+    tabDepth: 0 
+  },
+  medium: { 
+    difficulty: 'medium', 
+    gridSize: 6, 
+    pieceSize: 50, 
+    tabSize: 0, 
+    tabDepth: 0 
+  },
+  hard: { 
+    difficulty: 'hard', 
+    gridSize: 9, 
+    pieceSize: 33, 
+    tabSize: 0, 
+    tabDepth: 0 
+  }
+};
+
+// Single puzzle configuration
+export const MAIN_PUZZLE: Puzzle = {
+  id: 'main-puzzle',
+  title: 'Select the Puzzle',
+  image: '/puzzle.png',
+  difficulty: 'medium'
+};

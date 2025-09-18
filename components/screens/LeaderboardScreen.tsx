@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAppContext, LeaderboardEntry } from '@/components/AppProvider';
 import { getLeaderboard } from '@/lib/supabase';
+import { formatTime, getScoreGrade } from '@/lib/scoring';
 
 export default function LeaderboardScreen() {
   const { setCurrentScreen, resetSession } = useAppContext();
@@ -24,11 +25,13 @@ export default function LeaderboardScreen() {
     }
   };
 
-  const formatTime = (ms: number) => {
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'easy': return 'bg-green-100 text-green-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'hard': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
   const handleHome = () => {
@@ -42,7 +45,7 @@ export default function LeaderboardScreen() {
           🏆 Leaderboard 🏆
         </h1>
         <p className="text-lg md:text-xl text-gray-600">
-          Top 10 Fastest Players
+          Top 10 Highest Scores
         </p>
       </div>
 
@@ -54,10 +57,11 @@ export default function LeaderboardScreen() {
         ) : (
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="bg-gradient-to-r from-emerald-500 to-blue-500 text-white p-4">
-              <div className="grid grid-cols-4 gap-2 text-lg md:text-xl font-bold">
+              <div className="grid grid-cols-5 gap-2 text-lg md:text-xl font-bold">
                 <div>Rank</div>
                 <div>Name</div>
-                <div>City</div>
+                <div>Score</div>
+                <div>Difficulty</div>
                 <div>Time</div>
               </div>
             </div>
@@ -67,31 +71,45 @@ export default function LeaderboardScreen() {
                   No scores yet. Be the first to play!
                 </div>
               ) : (
-                leaderboard.slice(0, 10).map((entry, index) => (
-                  <div key={entry.id || index} className="p-4 hover:bg-gray-50">
-                    <div className="grid grid-cols-4 gap-2 text-base md:text-lg items-center">
-                      <div className="flex items-center">
-                        <span className="text-xl md:text-2xl font-bold text-emerald-600 mr-2">
-                          #{index + 1}
-                        </span>
-                        {index < 3 && (
-                          <span className="text-lg">
-                            {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                leaderboard.slice(0, 10).map((entry, index) => {
+                  const scoreGrade = getScoreGrade(entry.score);
+                  return (
+                    <div key={entry.id || index} className="p-4 hover:bg-gray-50">
+                      <div className="grid grid-cols-5 gap-2 text-base md:text-lg items-center">
+                        <div className="flex items-center justify-center">
+                          {index < 3 ? (
+                            <span className="text-3xl md:text-4xl">
+                              {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                            </span>
+                          ) : (
+                            <span className="text-xl md:text-2xl font-bold text-emerald-600">
+                              #{index + 1}
+                            </span>
+                          )}
+                        </div>
+                        <div className="font-semibold text-gray-800">
+                          {entry.name}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="font-bold text-lg" style={{ color: scoreGrade.color }}>
+                            {entry.score}
                           </span>
-                        )}
-                      </div>
-                      <div className="font-semibold text-gray-800">
-                        {entry.name}
-                      </div>
-                      <div className="text-gray-600">
-                        {entry.city}
-                      </div>
-                      <div className="font-bold text-blue-600">
-                        {formatTime(entry.time)}
+                          <span className="text-sm font-bold" style={{ color: scoreGrade.color }}>
+                            {scoreGrade.grade}
+                          </span>
+                        </div>
+                        <div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(entry.difficulty)}`}>
+                            {entry.difficulty}
+                          </span>
+                        </div>
+                        <div className="font-bold text-blue-600">
+                          {formatTime(entry.time)}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
