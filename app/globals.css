@@ -410,15 +410,15 @@ input::placeholder, textarea::placeholder {
   left: 0 !important;
   right: 0 !important;
   z-index: 9999 !important;
-  background-color: #001E27 !important; /* bg - 001E27 */
-  border-top: 2px solid #005E60;
+  background-color: var(--keyboard-bg) !important; /* bg - 001E27 */
+  border-top: 2px solid var(--keyboard-action-keys);
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
   pointer-events: auto !important; /* Ensure mouse events work */
 }
 
 /* Base keyboard key styling - other keys */
 .keyboard-key {
-  background-color: #003437 !important; /* other keys - 003437 */
+  background-color: var(--keyboard-other-keys) !important; /* other keys - 003437 */
   color: white !important;
   border: none !important;
   border-radius: 8px !important;
@@ -456,7 +456,7 @@ input::placeholder, textarea::placeholder {
 .mic-key,
 .space-key,
 .enter-key {
-  background-color: #005E60 !important; /* action keys - 005E60 */
+  background-color: var(--keyboard-action-keys) !important; /* action keys - 005E60 */
 }
 
 .shift-key:hover,
@@ -535,13 +535,110 @@ button, input, select, textarea, [role="button"] {
   }
 }
 
-/* Add bottom padding to content when keyboard is visible */
-.keyboard-visible {
-  padding-bottom: 280px !important; /* Space for keyboard */
+/* User Info Screen Layout */
+.user-info-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-@media (max-width: 768px) {
-  .keyboard-visible {
-    padding-bottom: 240px !important; /* Smaller space on mobile */
-  }
+.user-info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  padding-bottom: 0;
+}
+
+/* Input field styling to match reference */
+.info-input {
+  background-color: #B3E5FC !important; /* Light cyan background */
+  border: none !important;
+  border-radius: 1rem !important;
+  padding: 1.5rem !important;
+  font-size: 1.5rem !important;
+  color: #000 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease !important;
+}
+
+.info-input:hover {
+  background-color: #81D4FA !important; /* Slightly darker cyan on hover */
+}
+
+.info-input:focus,
+.info-input.active {
+  background-color: #4FC3F7 !important; /* Active state */
+  border: 2px solid #29B6F6 !important;
+}
+
+.info-input.completed {
+  background-color: #E8F5E8 !important; /* Light green for completed */
+  border: 2px solid #4CAF50 !important;
+}
+
+/* Dropdown styling */
+.info-dropdown {
+  background-color: #B3E5FC !important;
+  border: none !important;
+  border-radius: 1rem !important;
+  padding: 1.5rem !important;
+  font-size: 1.5rem !important;
+  color: #666 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease !important;
+}
+
+.info-dropdown:hover {
+  background-color: #81D4FA !important;
+}
+
+.info-dropdown.selected {
+  background-color: #4FC3F7 !important;
+  color: #000 !important;
+  border: 2px solid #29B6F6 !important;
+}
+
+.info-dropdown.completed {
+  background-color: #E8F5E8 !important; /* Light green for completed */
+  border: 2px solid #4CAF50 !important;
+  color: #000 !important;
+}
+
+/* Dropdown options */
+.dropdown-options {
+  background-color: white !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #E0E0E0 !important;
+  overflow: hidden;
+}
+
+.dropdown-option {
+  padding: 1.5rem !important;
+  font-size: 1.5rem !important;
+  color: #000 !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.dropdown-option:hover {
+  background-color: #F5F5F5 !important;
+}
+
+/* Keyboard positioning for UserInfoScreen */
+.keyboard-container {
+  position: relative;
+  z-index: 5;
+  margin-bottom: 20px; /* Space above border */
+}
+
+/* Ensure keyboard is positioned correctly for UserInfoScreen */
+.user-info-screen .virtual-keyboard {
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  margin: 0 auto;
 }

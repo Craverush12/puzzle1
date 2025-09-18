@@ -25,10 +25,12 @@ export default function BorderFrame({ children }: BorderFrameProps) {
                        (aspectRatio >= 1.4 && width >= 1600); // Desktop screens
       
       // Apply borders for kiosk screens (tablets, vertical displays, etc.)
+      // For testing, let's be more permissive with border display
       const isKiosk = !isDesktop && (
         width <= 1024 || // Small screens
-        aspectRatio <= 1.3 || // Vertical or square screens
-        height > width // Portrait orientation
+        aspectRatio <= 1.4 || // Vertical or square screens (increased from 1.3)
+        height > width || // Portrait orientation
+        width <= 1366 // Medium screens should also show borders
       );
       
       setShouldShowBorder(isKiosk);
@@ -60,11 +62,12 @@ export default function BorderFrame({ children }: BorderFrameProps) {
           width: '100vw',
           height: '100vh',
           backgroundImage: 'url(/border.svg)',
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           zIndex: 1,
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          opacity: 0.9
         }}
       />
       
@@ -73,13 +76,10 @@ export default function BorderFrame({ children }: BorderFrameProps) {
         className="border-frame-content"
         style={{
           position: 'relative',
-          zIndex: 2,
+          zIndex: 10,
           width: '100vw',
           height: '100vh',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
+          overflow: 'hidden'
         }}
       >
         {children}
