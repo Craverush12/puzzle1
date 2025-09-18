@@ -25,11 +25,17 @@ export default function SupabaseTest() {
   const testSubmission = async () => {
     setIsLoading(true);
     try {
+      const difficulties: ('easy' | 'medium' | 'hard')[] = ['easy', 'medium', 'hard'];
+      const cities: ('Jeddah' | 'Riyadh')[] = ['Jeddah', 'Riyadh'];
+      const randomDifficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+      const randomCity = cities[Math.floor(Math.random() * cities.length)];
+      
       const testScore = {
         name: `Test User ${Date.now()}`,
-        city: 'Riyadh' as const,
-        puzzle_id: 'test-puzzle',
+        city: randomCity,
+        difficulty: randomDifficulty,
         completion_time: Math.floor(Math.random() * 60000) + 10000, // 10-70 seconds
+        score: Math.floor(Math.random() * 1000) + 500, // Random score between 500-1500
       };
       
       await submitScore(testScore);
