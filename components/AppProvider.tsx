@@ -45,6 +45,13 @@ interface AppContextType {
   userSession: UserSession;
   setUserSession: (session: Partial<UserSession>) => void;
   resetSession: () => void;
+  // Keyboard state
+  showKeyboard: boolean;
+  setShowKeyboard: (show: boolean) => void;
+  keyboardValue: string;
+  setKeyboardValue: (value: string) => void;
+  activeInput: string | null;
+  setActiveInput: (input: string | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -62,6 +69,11 @@ const initialUserSession: UserSession = {
 export function AppProvider({ children }: { children: ReactNode }) {
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [userSession, setUserSessionState] = useState<UserSession>(initialUserSession);
+  
+  // Keyboard state
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const [keyboardValue, setKeyboardValue] = useState('');
+  const [activeInput, setActiveInput] = useState<string | null>(null);
 
   const setUserSession = (updates: Partial<UserSession>) => {
     setUserSessionState(prev => ({ ...prev, ...updates }));
@@ -70,6 +82,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const resetSession = () => {
     setUserSessionState(initialUserSession);
     setCurrentScreen('welcome');
+    // Reset keyboard state
+    setShowKeyboard(false);
+    setKeyboardValue('');
+    setActiveInput(null);
   };
 
   return (
@@ -79,6 +95,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       userSession,
       setUserSession,
       resetSession,
+      // Keyboard state
+      showKeyboard,
+      setShowKeyboard,
+      keyboardValue,
+      setKeyboardValue,
+      activeInput,
+      setActiveInput,
     }}>
       {children}
     </AppContext.Provider>
@@ -98,21 +121,21 @@ export const DIFFICULTY_CONFIGS: Record<string, PuzzleConfig> = {
   easy: { 
     difficulty: 'easy', 
     gridSize: 3, 
-    pieceSize: 100, 
+    pieceSize: 180, 
     tabSize: 0, 
     tabDepth: 0 
   },
   medium: { 
     difficulty: 'medium', 
     gridSize: 6, 
-    pieceSize: 50, 
+    pieceSize: 90, 
     tabSize: 0, 
     tabDepth: 0 
   },
   hard: { 
     difficulty: 'hard', 
     gridSize: 9, 
-    pieceSize: 33, 
+    pieceSize: 60, 
     tabSize: 0, 
     tabDepth: 0 
   }

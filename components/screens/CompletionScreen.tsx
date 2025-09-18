@@ -39,15 +39,21 @@ export default function CompletionScreen() {
         {/* Fireworks Image - Top center */}
         <div className="flex justify-center mb-16">
           <img 
-            src="/Group.svg" 
-            alt="Fireworks" 
-            className="w-84 h-84 md:w-48 md:h-48 object-contain"
+            src="/congrats.svg" 
+            alt="Fireworks celebration" 
+            className="w-80 h-80 md:w-96 md:h-96 lg:w-[400px] lg:h-[400px] object-contain"
+            loading="eager"
+            onError={(e) => {
+              console.error('Failed to load congrats.svg:', e);
+              e.currentTarget.style.display = 'none';
+            }}
+            onLoad={() => console.log('congrats.svg loaded successfully')}
           />
         </div>
 
         {/* Congratulation Text - Centered */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-white">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-medium text-white">
             Congratulation
           </h1>
         </div>

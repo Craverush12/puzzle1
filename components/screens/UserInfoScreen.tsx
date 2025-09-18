@@ -2,25 +2,45 @@
 
 import { useState, useEffect } from 'react';
 import { useAppContext } from '@/components/AppProvider';
-import VirtualKeyboard from '@/components/VirtualKeyboard';
 
 const cities: ('Jeddah' | 'Riyadh')[] = [
   'Jeddah', 'Riyadh'
 ];
 
 export default function UserInfoScreen() {
-  const { setCurrentScreen, setUserSession } = useAppContext();
+  const { 
+    setCurrentScreen, 
+    setUserSession,
+    showKeyboard,
+    setShowKeyboard,
+    keyboardValue,
+    setKeyboardValue,
+    activeInput,
+    setActiveInput
+  } = useAppContext();
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
-  const [showKeyboard, setShowKeyboard] = useState(true); // Always show keyboard as per reference
-  const [activeInput, setActiveInput] = useState<'name' | null>(null);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
-  // Always show keyboard for kiosk mode
+  // Show keyboard when entering this screen, hide when leaving
   useEffect(() => {
     setShowKeyboard(true);
+    setKeyboardValue(name); // Initialize with current name
+    
+    // Cleanup: Hide keyboard when leaving this screen
+    return () => {
+      setShowKeyboard(false);
+      setActiveInput(null);
+    };
   }, []);
+
+  // Update name when keyboard value changes and name input is active
+  useEffect(() => {
+    if (activeInput === 'name') {
+      setName(keyboardValue);
+    }
+  }, [keyboardValue, activeInput]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -53,7 +73,7 @@ export default function UserInfoScreen() {
   }, [name, city]);
 
   const handleNameClick = () => {
-    setActiveInput('name');
+    handleNameFocus();
     setShowKeyboard(true);
   };
 
@@ -67,10 +87,9 @@ export default function UserInfoScreen() {
     setShowCityDropdown(false);
   };
 
-  const handleKeyboardInput = (value: string) => {
-    if (activeInput === 'name') {
-      setName(value);
-    }
+  const handleNameFocus = () => {
+    setActiveInput('name');
+    setKeyboardValue(name); // Set current name value to keyboard
   };
 
   const handleContinue = () => {
@@ -83,14 +102,14 @@ export default function UserInfoScreen() {
   return (
     <div className="kiosk-container user-info-screen flex flex-col h-full">
       {/* Title - positioned just below border */}
-      <div className="flex justify-center pt-8 pb-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-white">
+      <div className="flex justify-center pt-[5rem] pb-4">
+        <h1 className="text-4xl md:text-5xl font-medium text-white">
           Enter your info
         </h1>
       </div>
 
       {/* Main content area - centered inputs */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6">
+      <div className="flex-1 flex flex-col items-center justify-center p-6" style={{ paddingBottom: `calc(${showKeyboard ? '350px' : '24px'} * var(--kiosk-scale))` }}>
         {/* Completion indicator */}
         {isComplete && (
           <div className="mb-6 text-center">
@@ -160,20 +179,6 @@ export default function UserInfoScreen() {
         </div>
       </div>
 
-      {/* Virtual keyboard - positioned at bottom above border */}
-      {showKeyboard && (
-        <div className="keyboard-container">
-          <VirtualKeyboard
-            onKeyPress={handleKeyboardInput}
-            onClose={() => {
-              setActiveInput(null);
-              // Keep keyboard open for kiosk mode
-            }}
-            currentValue={name}
-            showCloseButton={false}
-          />
-        </div>
-      )}
     </div>
   );
 }

@@ -25,15 +25,16 @@ export default function BorderFrame({ children }: BorderFrameProps) {
         className="border-frame-bg"
         style={{
           position: 'fixed',
-          top: 0,
+          top: 8,
+          // bottom: 8,
           left: 0,
           width: '100vw',
           height: '100vh',
-          backgroundImage: 'url("/Group 77.png")',
-          backgroundSize: 'cover',
+          backgroundImage: 'url("/border.png")',
+          backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          zIndex: 1,
+          zIndex: 11,
           pointerEvents: 'none',
           opacity: 1,
           // Debug: Add a fallback background color to see if element is there

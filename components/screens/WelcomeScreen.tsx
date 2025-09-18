@@ -7,18 +7,24 @@ export default function WelcomeScreen() {
 
   return (
     <div className="kiosk-container flex flex-col items-center justify-center p-6">
-      <div className="text-center mb-12">
-        {/* Simplified design - just the button and subtitle */}
+      {/* Hero Image - Center of screen */}
+      <div className="flex justify-center mb-8">
+        <img 
+          src="/illustration.png" 
+          alt="Saudi Arabia Development Illustration" 
+          className="w-auto h-[40rem] object-contain"
+        />
       </div>
 
+      {/* Begin Button - Just below hero image */}
       <button
         onClick={() => setCurrentScreen('userInfo')}
-        className="transform hover:scale-105 transition-all duration-200 active:scale-95"
+        className="transform hover:scale-105 transition-all duration-200 active:scale-95 mb-4"
       >
         <img 
-          src="/begin.png" 
+          src="/beginbutton.png" 
           alt="Begin" 
-          className="w-auto h-20 md:h-24"
+          className="w-auto h-[4rem]"
         />
       </button>
       

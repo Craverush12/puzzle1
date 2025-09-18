@@ -34,7 +34,7 @@ export default function LeaderboardScreen() {
   return (
     <div className="kiosk-container flex flex-col p-6" style={{ backgroundColor: '#004F53' }}>
       <div className="text-center mb-6">
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
+        <h1 className="text-4xl md:text-5xl font-medium text-white mb-3">
           Leaderboard
         </h1>
       </div>
@@ -102,7 +102,7 @@ export default function LeaderboardScreen() {
           onClick={handleHome}
           className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white text-xl font-bold py-3 px-8 rounded-2xl transition-colors border border-teal-700 shadow-lg flex items-center space-x-2"
         >
-          <Image src="/Home.png" alt="Home" width={24} height={24} />
+          <Image src="/Homebutton.png" alt="Home" width={24} height={24} />
           <span>Home</span>
         </button>
       </div>

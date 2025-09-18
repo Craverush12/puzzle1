@@ -243,46 +243,51 @@ export default function PuzzlePlayScreen() {
   }
 
   return (
-    <div className="kiosk-container flex flex-col p-4">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-lg md:text-xl font-bold text-gray-800">
-          Player: {userSession.name}
-        </div>
-        <Timer 
-          startTime={userSession.startTime}
-          onTimeUpdate={setTimeElapsed}
-        />
-      </div>
-
-      {/* Puzzle Title */}
-      <div className="text-center mb-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-          {MAIN_PUZZLE.title}
+    <div className="flex flex-col h-full justify-between p-8">
+      {/* TOP SECTION */}
+      <div className="flex flex-col items-center">
+        {/* Title at the very top */}
+        <h2 className="text-3xl font-medium text-white mt-16 text-center">
+          Puzzle Title
         </h2>
-        <div className="text-sm md:text-base text-gray-600 mb-2">
-          Difficulty: <span className="font-bold capitalize">{userSession.selectedDifficulty}</span> • 
-          Pieces: <span className="font-bold">{totalPieces}</span> • 
-          Grid: <span className="font-bold">{gridSize}×{gridSize}</span>
-        </div>
-        {!isComplete && (
-          <p className="text-sm md:text-base text-gray-600">
-            Drag the jigsaw pieces to their correct positions. They'll snap into place when close!
-          </p>
-        )}
-        {isComplete && (
-          <p className="text-lg md:text-xl font-bold text-emerald-600 animate-pulse">
-            Puzzle Complete! Well done! 🎉
-          </p>
-        )}
       </div>
 
-      {/* Puzzle Board */}
-      <div className="flex-1 flex items-center justify-center overflow-hidden">
+      {/* CENTER SECTION - Puzzle */}
+      <div className="flex-1 flex flex-col items-center justify-center">
+        {/* Name and Timer row - just above progress bar */}
+        <div className="flex justify-between items-center mb-6" style={{ width: gridSize * jigsawConfig.pieceSize * 0.8 }}>
+          <div className="text-3xl font-bold text-white">
+            {userSession.name}
+          </div>
+          <Timer 
+            startTime={userSession.startTime}
+            onTimeUpdate={setTimeElapsed}
+          />
+        </div>
+
+        {/* Progress Bar positioned just above puzzle */}
+        <div className="mb-8" style={{ width: gridSize * jigsawConfig.pieceSize * 0.8 }}>
+          <div className="w-full h-6 bg-gray-600 rounded-full overflow-hidden">
+            <div 
+              className="h-full rounded-full transition-all duration-300 relative"
+              style={{ 
+                width: `${pieces.length > 0 ? (pieces.filter(p => p.isPlaced).length / pieces.length) * 100 : 0}%`,
+                background: 'linear-gradient(-45deg, #8FD2CE 25%, #00823F 25%, #00823F 50%, #8FD2CE 50%, #8FD2CE 75%, #00823F 75%)',
+                backgroundSize: '20px 20px',
+                animation: 'progress-stripes 1s linear infinite'
+              }}
+            />
+          </div>
+        </div>
+
         <div 
           ref={boardRef}
-          className="relative bg-gray-100 border-4 border-gray-300 rounded-lg"
-          style={{ width: gridSize * jigsawConfig.pieceSize, height: gridSize * jigsawConfig.pieceSize }}
+          className="relative rounded-lg"
+          style={{ 
+            backgroundColor: '#004F53',
+            width: gridSize * jigsawConfig.pieceSize,
+            height: gridSize * jigsawConfig.pieceSize
+          }}
           onMouseMove={handleMove}
           onMouseUp={handleEnd}
           onTouchMove={handleMove}
@@ -416,30 +421,30 @@ export default function PuzzlePlayScreen() {
             </div>
           )}
         </div>
-      </div>
 
-      {/* Footer Buttons */}
-      <div className="flex justify-center space-x-4 mt-4">
-        <button
-          onClick={handleBack}
-          className="transform hover:scale-105 transition-all duration-200 active:scale-95"
-        >
-          <img 
-            src="/Back.png" 
-            alt="Back" 
-            className="w-auto h-12 md:h-14"
-          />
-        </button>
-        <button
-          onClick={handleHome}
-          className="transform hover:scale-105 transition-all duration-200 active:scale-95"
-        >
-          <img 
-            src="/Home.png" 
-            alt="Home" 
-            className="w-auto h-12 md:h-14"
-          />
-        </button>
+        {/* Buttons positioned just below puzzle */}
+        <div className="flex justify-between items-center mt-4" style={{ width: gridSize * jigsawConfig.pieceSize }}>
+          <button
+            onClick={handleBack}
+            className="transform hover:scale-105 transition-all duration-200 active:scale-95"
+          >
+            <img 
+              src="/backbutton.png" 
+              alt="Back" 
+              className="w-auto h-12 md:h-14"
+            />
+          </button>
+          <button
+            onClick={handleHome}
+            className="transform hover:scale-105 transition-all duration-200 active:scale-95"
+          >
+            <img 
+              src="/Homebutton.png" 
+              alt="Home" 
+              className="w-auto h-12 md:h-14"
+            />
+          </button>
+        </div>
       </div>
     </div>
   );

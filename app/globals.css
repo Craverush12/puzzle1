@@ -408,8 +408,8 @@ input::placeholder, textarea::placeholder {
   position: fixed !important;
   bottom: 0 !important;
   left: 0 !important;
+  z-index: 999 !important; /* Much higher than any other element */
   right: 0 !important;
-  z-index: 9999 !important;
   background-color: var(--keyboard-bg) !important; /* bg - 001E27 */
   border-top: 2px solid var(--keyboard-action-keys);
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
@@ -422,10 +422,10 @@ input::placeholder, textarea::placeholder {
   color: white !important;
   border: none !important;
   border-radius: 8px !important;
-  font-size: 1.1rem !important;
+  font-size: 1.3rem !important;
   font-weight: 500 !important;
-  min-height: 48px !important;
-  min-width: 48px !important;
+  min-height: 60px !important;
+  min-width: 60px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -497,9 +497,9 @@ input::placeholder, textarea::placeholder {
 /* Responsive adjustments for vertical orientation */
 @media (max-width: 768px) {
   .keyboard-key {
-    min-height: 44px !important;
-    min-width: 44px !important;
-    font-size: 1rem !important;
+    min-height: 60px !important;
+    min-width: 60px !important;
+    font-size: 1.5rem !important;
   }
   
   .virtual-keyboard {
@@ -510,8 +510,8 @@ input::placeholder, textarea::placeholder {
 /* Desktop adjustments */
 @media (min-width: 769px) {
   .keyboard-key {
-    min-height: 52px !important;
-    min-width: 52px !important;
+    min-height: 60px !important;
+    min-width: 60px !important;
     font-size: 1.2rem !important;
   }
 }
@@ -630,15 +630,25 @@ button, input, select, textarea, [role="button"] {
 /* Keyboard positioning for UserInfoScreen */
 .keyboard-container {
   position: relative;
-  z-index: 5;
+  z-index: 25;
   margin-bottom: 20px; /* Space above border */
 }
 
 /* Ensure keyboard is positioned correctly for UserInfoScreen */
 .user-info-screen .virtual-keyboard {
-  position: relative !important;
-  bottom: auto !important;
-  left: auto !important;
-  right: auto !important;
-  margin: 0 auto;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 25 !important;
+}
+
+/* Progress Bar Animation */
+@keyframes progress-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
 }

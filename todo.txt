@@ -1,0 +1,22 @@
+Welcome screen - 
+1. add the hero image in the center of the screen
+2. add the urdu written at the bottom of the screen algining with the border
+4. algin the begin button just below th ehero image
+
+
+
+puzzle play screen - 
+1. title of the puzzle has to be in medium weight  and white font on the titel center of the screen
+2. below it name to be displayed of the person and in the same row the timer needs to be showed
+below
+4. back andhome buttons have ot be aligned at the edges of the puzzle visible
+
+leaderboard page - 
+1. leaderboaed text needs to have medium weight
+2. text inside the leaderboard to have normal weight
+3. leaderbaord colors -
+title - 005E60
+table - 004F53
+
+
+
