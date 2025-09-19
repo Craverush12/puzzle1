@@ -20,8 +20,8 @@ export default function PuzzlePlayScreen() {
   const gridSize = originalConfig.gridSize;
   const totalPieces = gridSize * gridSize;
   
-  // Create modified config with correct piece size for 256px board
-  const pieceSize = 256 / gridSize;
+  // Create modified config with correct piece size for 288px board (w-72 h-72)
+  const pieceSize = 288 / gridSize;
   const jigsawConfig: JigsawConfig = {
     ...originalConfig,
     pieceSize: pieceSize
@@ -144,9 +144,9 @@ export default function PuzzlePlayScreen() {
     let newX = clientX - boardRect.left - draggedPiece.dragOffset.x;
     let newY = clientY - boardRect.top - draggedPiece.dragOffset.y;
     
-    // Constrain pieces within the visible puzzle area (256px x 256px)
-    const maxX = 256 - draggedPiece.bounds.width;
-    const maxY = 256 - draggedPiece.bounds.height;
+    // Constrain pieces within the visible puzzle area (288px x 288px)
+    const maxX = 288 - draggedPiece.bounds.width;
+    const maxY = 288 - draggedPiece.bounds.height;
     
     newX = Math.max(0, Math.min(newX, maxX));
     newY = Math.max(0, Math.min(newY, maxY));
@@ -223,7 +223,7 @@ export default function PuzzlePlayScreen() {
       top: piece.currentPosition.y,
       width: piece.bounds.width,
       height: piece.bounds.height,
-      zIndex: piece.isDragging ? 1000 : (piece.isPlaced ? 2 : 1),
+      zIndex: piece.isDragging ? 1000 : (piece.isPlaced ? 1 : 10),
       filter: piece.isPlaced ? 'drop-shadow(0 0 5px #10b981)' : 'none',
       transition: piece.isDragging ? 'none' : 'all 0.2s ease',
       opacity: piece.isPlaced ? 0.9 : 1,
@@ -248,7 +248,7 @@ export default function PuzzlePlayScreen() {
       {/* Puzzle Play Screen Image - Center of screen */}
       <div className="flex justify-center h-full">
         <img 
-          src="/puzzleplayscreen.png" 
+          src="/blank.png" 
           alt="Puzzle Play Screen" 
           className="w-auto h-full object-contain"
         />
@@ -262,8 +262,8 @@ export default function PuzzlePlayScreen() {
         {/* CENTER SECTION - Puzzle */}
         <div className="flex-1 flex flex-col items-center justify-center">
         {/* Name and Timer row - just above progress bar */}
-        <div className="flex justify-between items-center mb-4" style={{ width: '256px' }}>
-          <div className="text-sm font-bold text-white">
+        <div className="flex justify-between items-center mb-4" style={{ width: '288px' }}>
+          <div className="text-lg font-medium text-white">
             {userSession.name}
           </div>
           <div className="text-xs">
@@ -275,8 +275,8 @@ export default function PuzzlePlayScreen() {
         </div>
 
         {/* Progress Bar positioned just above puzzle */}
-        <div className="mb-4" style={{ width: '256px' }}>
-          <div className="w-full h-4 bg-gray-600 rounded-full overflow-hidden">
+        <div className="mb-4" style={{ width: '288px' }}>
+          <div className="w-full h-4 bg-[#002831] rounded-full overflow-hidden">
             <div 
               className="h-full rounded-full transition-all duration-300 relative"
               style={{ 
@@ -291,11 +291,11 @@ export default function PuzzlePlayScreen() {
 
         <div 
           ref={boardRef}
-          className="relative rounded-lg border-2 border-gray-400"
+          className="relative"
           style={{ 
             backgroundColor: '#004F53',
-            width: '256px',
-            height: '256px'
+            width: '288px',
+            height: '288px'
           }}
           onMouseMove={handleMove}
           onMouseUp={handleEnd}
@@ -313,7 +313,7 @@ export default function PuzzlePlayScreen() {
               return (
                 <div
                   key={index}
-                  className="border border-dashed border-gray-400 opacity-30"
+                  className="border border-solid  opacity-30"
                   style={{
                     position: 'absolute',
                     left: pos.x,
@@ -353,8 +353,8 @@ export default function PuzzlePlayScreen() {
                   href={piece.image}
                   x={-col * jigsawConfig.pieceSize}
                   y={-row * jigsawConfig.pieceSize}
-                  width="256"
-                  height="256"
+                  width="288"
+                  height="288"
                   clipPath={`url(#clip-${piece.id})`}
                   preserveAspectRatio="none"
                 />
@@ -371,7 +371,7 @@ export default function PuzzlePlayScreen() {
         </div>
 
         {/* Buttons positioned just below puzzle */}
-        <div className="flex justify-between items-center mt-4" style={{ width: '256px' }}>
+        <div className="flex justify-between items-center mt-4" style={{ width: '288px' }}>
           <button
             onClick={handleBack}
             className="transform hover:scale-105 transition-all duration-200 active:scale-95"

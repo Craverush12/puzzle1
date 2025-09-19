@@ -19,16 +19,16 @@ export default function WelcomeScreen() {
       {/* Begin Button - Just below hero image */}
       <button
         onClick={() => setCurrentScreen('userInfo')}
-        className="transform hover:scale-105 transition-all duration-200 active:scale-95 absolute bottom-40"
+        className="transform hover:scale-105 transition-all duration-200 active:scale-95 absolute bottom-[11rem]"
       >
         <img 
           src="/beginbutton.png" 
           alt="Begin" 
-          className="w-auto h-[2rem]"
+          className="w-auto h-[2.75rem]"
         />
       </button>
       
-      <p className="text-white text-md md:text-xs absolute bottom-32">
+      <p className="text-white text-xs absolute bottom-[9.5rem]">
         Touch to start
       </p>
 

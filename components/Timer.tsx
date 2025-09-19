@@ -31,8 +31,8 @@ export default function Timer({ startTime, onTimeUpdate }: TimerProps) {
   };
 
   return (
-    <div className="text-white px-4 py-2 rounded-2xl" style={{ backgroundColor: '#014A4E' }}>
-      <div className="text-xl md:text-xl font-bold">
+    <div className="text-white px-6 py-1.5 rounded-[0.5rem]" style={{ backgroundColor: '#014A4E' }}>
+      <div className="text-lg md:text-lg font-medium">
         {formatTime(elapsed)}
       </div>
     </div>

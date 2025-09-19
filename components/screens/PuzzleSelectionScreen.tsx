@@ -21,7 +21,7 @@ export default function PuzzleSelectionScreen() {
       {/* Puzzle Selection Screen Image - Center of screen */}
       <div className="flex justify-center h-full">
         <img 
-          src="/selectpuzzle.png" 
+          src="/blank.png" 
           alt="Select Puzzle Screen" 
           className="w-auto h-full object-contain"
         />
@@ -38,13 +38,16 @@ export default function PuzzleSelectionScreen() {
               <button
                 key={difficulty}
                 onClick={() => handleDifficultySelect(difficulty)}
-                className={`transform hover:scale-105 transition-all duration-200 active:scale-95 relative rounded-2xl px-4 ${
+                className={`transform hover:scale-105 transition-all duration-200 active:scale-95 relative rounded-md px-4 pt-[0.25rem] pb-[0.25rem] border-2 flex items-center justify-center ${
                   isSelected 
-                    ? 'border-teal-400 bg-teal-800/50' 
-                    : 'border-gray-400 bg-gray-800/30 hover:border-teal-300'
+                    ? 'border-[#014A4E]' 
+                    : 'border-[#014A4E] hover:border-[#014A4E]'
                 }`}
+                style={{
+                  backgroundColor: isSelected ? '#002124' : '#004F53'
+                }}
               >
-                <span className="text-white font-medium text-sm">
+                <span className="text-white font-medium text-sm text-center">
                   {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
                 </span>
               </button>
@@ -57,7 +60,7 @@ export default function PuzzleSelectionScreen() {
           <img
             src={MAIN_PUZZLE.image}
             alt={MAIN_PUZZLE.title}
-            className="w-64 h-64 object-cover rounded-lg"
+            className="w-72 h-72 object-cover rounded-lg"
           />
         </div>
       </div>

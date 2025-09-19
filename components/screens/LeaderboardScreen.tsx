@@ -51,15 +51,16 @@ export default function LeaderboardScreen() {
               <div className="text-lg text-white">Loading leaderboard...</div>
             </div>
           ) : (
-            <div className="bg-[#004F53] rounded-xl shadow-xl overflow-hidden">
-              <div className="bg-[#004F53] text-white p-2">
-                <div className="grid grid-cols-12 gap-1 text-sm font-normal">
-                  <div className="col-span-5">Name</div>
+            <div className="bg-[#004F53] rounded-md shadow-xl overflow-hidden">
+              <div className="bg-[#005E60] text-white p-2">
+                <div className="grid grid-cols-12 gap-2 text-sm font-normal">
+                  <div className="col-span-1"></div>
+                  <div className="col-span-4 ml-4">Name</div>
                   <div className="col-span-4">City</div>
-                  <div className="col-span-3 text-right">Points</div>
+                  <div className="col-span-3">Points</div>
                 </div>
               </div>
-              <div className="divide-y divide-gray-400">
+              <div className="divide-y divide-[#005E60]">
                 {leaderboard.length === 0 ? (
                   <div className="p-4 text-center text-base text-gray-300">
                     No scores yet. Be the first to play!
@@ -68,8 +69,8 @@ export default function LeaderboardScreen() {
                   leaderboard.slice(0, 10).map((entry, index) => {
                     return (
                       <div key={entry.id || index} className="p-1.5 hover:bg-gray-600">
-                        <div className="grid grid-cols-12 gap-1 text-xs items-center">
-                          <div className="col-span-5 flex items-center space-x-1">
+                        <div className="grid grid-cols-12 gap-2 text-xs items-center">
+                          <div className="col-span-1 flex items-center justify-center">
                             <div className="flex items-center justify-center w-4 h-4">
                               {index === 0 ? (
                                 <img src="/gold.svg" alt="Gold Medal" width={12} height={12} />
@@ -83,14 +84,14 @@ export default function LeaderboardScreen() {
                                 </span>
                               )}
                             </div>
-                            <div className="font-normal text-white text-xs">
-                              {entry.name}
-                            </div>
+                          </div>
+                          <div className="col-span-4 font-normal text-white text-xs ml-4">
+                            {entry.name}
                           </div>
                           <div className="col-span-4 font-normal text-white text-xs">
                             {entry.city || 'Unknown'}
                           </div>
-                          <div className="col-span-3 font-normal text-white text-right text-xs">
+                          <div className="col-span-3 font-normal text-white text-xs">
                             {calculateScore(entry.time, entry.difficulty)}
                           </div>
                         </div>
