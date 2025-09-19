@@ -26,48 +26,20 @@ export default function CompletionScreen() {
 
 
   return (
-    <div className="min-h-screen relative" style={{ backgroundColor: 'var(--background-primary)' }}>
-      {/* Background SVG */}
-      <div className="absolute inset-0 opacity-30">
-        {/* <img src="/Group.svg" alt="" className="w-full h-full object-cover" /> */}
+    <div className="kiosk-container flex flex-col items-center justify-center">
+      {/* Congratulations Screen Image - Center of screen */}
+      <div className="flex justify-center h-full">
+        <img 
+          src="/congratulationscreen.png" 
+          alt="Congratulations Screen" 
+          className="w-auto h-full object-contain"
+        />
       </div>
 
-
-      {/* Content Container - Top to bottom flow with proper padding */}
-      <div className="relative z-10 pt-16 pb-16 px-8 min-h-screen flex flex-col">
-        
-        {/* Fireworks Image - Top center */}
-        <div className="flex justify-center mb-16">
-          <img 
-            src="/congrats.svg" 
-            alt="Fireworks celebration" 
-            className="w-80 h-80 md:w-96 md:h-96 lg:w-[400px] lg:h-[400px] object-contain"
-            loading="eager"
-            onError={(e) => {
-              console.error('Failed to load congrats.svg:', e);
-              e.currentTarget.style.display = 'none';
-            }}
-            onLoad={() => console.log('congrats.svg loaded successfully')}
-          />
-        </div>
-
-        {/* Congratulation Text - Centered */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-medium text-white">
-            Congratulation
-          </h1>
-        </div>
-        
-        {/* Subtitle Text - Centered */}
-        <div className="text-center mb-12">
-          <p className="text-xl md:text-2xl lg:text-3xl text-white">
-            Together we celebrate the pride of Saudi Arabia
-          </p>
-        </div>
-        
-
+      {/* Centered content - positioned within the border area */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
         {/* Leaderboard Button - Centered at bottom */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-auto mb-20">
           <button
             onClick={handleViewLeaderboard}
             className="transform hover:scale-105 transition-all duration-200 active:scale-95"
@@ -75,7 +47,7 @@ export default function CompletionScreen() {
             <img 
               src="/Leaderboard.png" 
               alt="Leaderboard" 
-              className="w-auto h-16 md:h-20"
+              className="w-auto h-12"
             />
           </button>
         </div>

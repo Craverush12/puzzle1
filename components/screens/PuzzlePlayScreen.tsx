@@ -12,16 +12,20 @@ export default function PuzzlePlayScreen() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [pieces, setPieces] = useState<JigsawPiece[]>([]);
   const [isComplete, setIsComplete] = useState(false);
-  const [showAnimation, setShowAnimation] = useState(true);
-  const [animationPhase, setAnimationPhase] = useState<'loading' | 'full' | 'breaking' | 'complete'>('loading');
-  const [showFullPuzzle, setShowFullPuzzle] = useState(false);
   const [draggedPiece, setDraggedPiece] = useState<JigsawPiece | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
 
   // Get difficulty configuration
-  const jigsawConfig: JigsawConfig = DIFFICULTY_CONFIGS[userSession.selectedDifficulty];
-  const gridSize = jigsawConfig.gridSize;
+  const originalConfig: JigsawConfig = DIFFICULTY_CONFIGS[userSession.selectedDifficulty];
+  const gridSize = originalConfig.gridSize;
   const totalPieces = gridSize * gridSize;
+  
+  // Create modified config with correct piece size for 256px board
+  const pieceSize = 256 / gridSize;
+  const jigsawConfig: JigsawConfig = {
+    ...originalConfig,
+    pieceSize: pieceSize
+  };
 
   useEffect(() => {
     if (!gameStarted) {
@@ -44,40 +48,14 @@ export default function PuzzlePlayScreen() {
   const initializePuzzle = () => {
     if (!userSession.selectedDifficulty) return;
     
-    setAnimationPhase('loading');
-    setShowAnimation(true);
-    setShowFullPuzzle(false);
-    
-    // First phase: Show loading
-    setTimeout(() => {
-      setAnimationPhase('full');
-      setShowFullPuzzle(true);
-      
-      // Second phase: Show full puzzle for a moment
-      setTimeout(() => {
-        setAnimationPhase('breaking');
-        
-        // Generate pieces during breaking
-        const newPieces = generateJigsawPieces(
-          MAIN_PUZZLE.image,
-          jigsawConfig
-        );
+    // Generate pieces immediately without animations
+    const newPieces = generateJigsawPieces(
+      MAIN_PUZZLE.image,
+      jigsawConfig
+    );
 
-        setPieces(newPieces);
-        setIsComplete(false);
-        setShowFullPuzzle(false);
-        
-        // Third phase: Breaking animation complete
-        setTimeout(() => {
-          setAnimationPhase('complete');
-          
-          // Fourth phase: Hide animation
-          setTimeout(() => {
-            setShowAnimation(false);
-          }, 1000);
-        }, 2000);
-      }, 1500);
-    }, 1000);
+    setPieces(newPieces);
+    setIsComplete(false);
   };
 
   const checkCompletion = () => {
@@ -117,7 +95,7 @@ export default function PuzzlePlayScreen() {
   };
 
   const handleStart = (e: React.MouseEvent | React.TouchEvent, piece: JigsawPiece) => {
-    if (isComplete) return;
+    if (isComplete || piece.isPlaced) return; // Prevent dragging placed pieces
     
     // Only prevent default for touch events, not mouse events
     if ('touches' in e) {
@@ -163,13 +141,39 @@ export default function PuzzlePlayScreen() {
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
     
-    const newX = clientX - boardRect.left - draggedPiece.dragOffset.x;
-    const newY = clientY - boardRect.top - draggedPiece.dragOffset.y;
+    let newX = clientX - boardRect.left - draggedPiece.dragOffset.x;
+    let newY = clientY - boardRect.top - draggedPiece.dragOffset.y;
+    
+    // Constrain pieces within the visible puzzle area (256px x 256px)
+    const maxX = 256 - draggedPiece.bounds.width;
+    const maxY = 256 - draggedPiece.bounds.height;
+    
+    newX = Math.max(0, Math.min(newX, maxX));
+    newY = Math.max(0, Math.min(newY, maxY));
+    
+    // Check if piece is close enough to correct position for auto-snap
+    const correctPos = getCorrectPiecePosition(draggedPiece.correctIndex, jigsawConfig);
+    const distance = Math.sqrt(
+      Math.pow(newX - correctPos.x, 2) + 
+      Math.pow(newY - correctPos.y, 2)
+    );
+    
+    // Auto-snap if within 25 pixels of correct position
+    const shouldSnap = distance <= 25;
+    if (shouldSnap) {
+      // Ensure exact positioning at grid boundaries
+      newX = Math.round(correctPos.x);
+      newY = Math.round(correctPos.y);
+    }
     
     setPieces(prevPieces => 
       prevPieces.map(p => 
         p.id === draggedPiece.id 
-          ? { ...p, currentPosition: { x: newX, y: newY } }
+          ? { 
+              ...p, 
+              currentPosition: { x: newX, y: newY }
+              // Don't mark as placed during drag - only on release
+            }
           : p
       )
     );
@@ -183,28 +187,27 @@ export default function PuzzlePlayScreen() {
       e.preventDefault();
     }
     
-    // Check if piece is near correct position using proper collision detection
-    if (isPieceInCorrectPosition(draggedPiece, jigsawConfig, 30)) {
-      // Get the correct position for this piece
-      const correctPos = getCorrectPiecePosition(draggedPiece.correctIndex, jigsawConfig);
+    // Check if piece should be permanently placed at release
+    const correctPos = getCorrectPiecePosition(draggedPiece.correctIndex, jigsawConfig);
+    const currentPiece = pieces.find(p => p.id === draggedPiece.id);
+    
+    if (currentPiece) {
+      const distance = Math.sqrt(
+        Math.pow(currentPiece.currentPosition.x - correctPos.x, 2) + 
+        Math.pow(currentPiece.currentPosition.y - correctPos.y, 2)
+      );
+      
+      const shouldPlace = distance <= 25;
       
       setPieces(prevPieces => 
         prevPieces.map(p => 
           p.id === draggedPiece.id 
             ? { 
                 ...p, 
-                currentPosition: correctPos,
-                isPlaced: true,
-                isDragging: false
+                isDragging: false,
+                isPlaced: shouldPlace || p.isPlaced,
+                currentPosition: shouldPlace ? correctPos : p.currentPosition
               }
-            : p
-        )
-      );
-    } else {
-      setPieces(prevPieces => 
-        prevPieces.map(p => 
-          p.id === draggedPiece.id 
-            ? { ...p, isDragging: false }
             : p
         )
       );
@@ -214,18 +217,16 @@ export default function PuzzlePlayScreen() {
   };
 
   const getPieceStyle = (piece: JigsawPiece) => {
-    // Check if piece is near correct position for magnetic effect
-    const isNearCorrect = isPieceInCorrectPosition(piece, jigsawConfig, 30) && !piece.isPlaced;
-    
     return {
       position: 'absolute' as const,
       left: piece.currentPosition.x,
       top: piece.currentPosition.y,
       width: piece.bounds.width,
       height: piece.bounds.height,
-      zIndex: piece.isDragging ? 1000 : 1,
-      filter: isNearCorrect ? 'drop-shadow(0 0 10px #10b981)' : 'none',
-      transition: piece.isDragging ? 'none' : 'all 0.3s ease',
+      zIndex: piece.isDragging ? 1000 : (piece.isPlaced ? 2 : 1),
+      filter: piece.isPlaced ? 'drop-shadow(0 0 5px #10b981)' : 'none',
+      transition: piece.isDragging ? 'none' : 'all 0.2s ease',
+      opacity: piece.isPlaced ? 0.9 : 1,
     };
   };
 
@@ -233,8 +234,8 @@ export default function PuzzlePlayScreen() {
     const row = Math.floor(index / gridSize);
     const col = index % gridSize;
     return {
-      x: col * jigsawConfig.pieceSize,
-      y: row * jigsawConfig.pieceSize
+      x: Math.round(col * jigsawConfig.pieceSize),
+      y: Math.round(row * jigsawConfig.pieceSize)
     };
   };
 
@@ -243,31 +244,39 @@ export default function PuzzlePlayScreen() {
   }
 
   return (
-    <div className="flex flex-col h-full justify-between p-8">
-      {/* TOP SECTION */}
-      <div className="flex flex-col items-center">
-        {/* Title at the very top */}
-        <h2 className="text-3xl font-medium text-white mt-16 text-center">
-          Puzzle Title
-        </h2>
+    <div className="kiosk-container flex flex-col items-center justify-center">
+      {/* Puzzle Play Screen Image - Center of screen */}
+      <div className="flex justify-center h-full">
+        <img 
+          src="/puzzleplayscreen.png" 
+          alt="Puzzle Play Screen" 
+          className="w-auto h-full object-contain"
+        />
       </div>
 
-      {/* CENTER SECTION - Puzzle */}
-      <div className="flex-1 flex flex-col items-center justify-center">
+      {/* Centered content - positioned within the border area */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        {/* TOP SECTION */}
+        {/*  */}
+
+        {/* CENTER SECTION - Puzzle */}
+        <div className="flex-1 flex flex-col items-center justify-center">
         {/* Name and Timer row - just above progress bar */}
-        <div className="flex justify-between items-center mb-6" style={{ width: gridSize * jigsawConfig.pieceSize * 0.8 }}>
-          <div className="text-3xl font-bold text-white">
+        <div className="flex justify-between items-center mb-4" style={{ width: '256px' }}>
+          <div className="text-sm font-bold text-white">
             {userSession.name}
           </div>
-          <Timer 
-            startTime={userSession.startTime}
-            onTimeUpdate={setTimeElapsed}
-          />
+          <div className="text-xs">
+            <Timer 
+              startTime={userSession.startTime}
+              onTimeUpdate={setTimeElapsed}
+            />
+          </div>
         </div>
 
         {/* Progress Bar positioned just above puzzle */}
-        <div className="mb-8" style={{ width: gridSize * jigsawConfig.pieceSize * 0.8 }}>
-          <div className="w-full h-6 bg-gray-600 rounded-full overflow-hidden">
+        <div className="mb-4" style={{ width: '256px' }}>
+          <div className="w-full h-4 bg-gray-600 rounded-full overflow-hidden">
             <div 
               className="h-full rounded-full transition-all duration-300 relative"
               style={{ 
@@ -282,11 +291,11 @@ export default function PuzzlePlayScreen() {
 
         <div 
           ref={boardRef}
-          className="relative rounded-lg"
+          className="relative rounded-lg border-2 border-gray-400"
           style={{ 
             backgroundColor: '#004F53',
-            width: gridSize * jigsawConfig.pieceSize,
-            height: gridSize * jigsawConfig.pieceSize
+            width: '256px',
+            height: '256px'
           }}
           onMouseMove={handleMove}
           onMouseUp={handleEnd}
@@ -319,25 +328,21 @@ export default function PuzzlePlayScreen() {
 
           {/* Puzzle Pieces */}
           {pieces.map((piece, index) => {
-            const isNearCorrect = isPieceInCorrectPosition(piece, jigsawConfig, 30) && !piece.isPlaced;
             const row = Math.floor(piece.correctIndex / gridSize);
             const col = piece.correctIndex % gridSize;
             
             return (
               <svg
                 key={piece.id}
-                className={`cursor-grab active:cursor-grabbing ${
-                  piece.isDragging ? 'scale-110 shadow-2xl' : 'hover:scale-105'
-                } ${isNearCorrect ? 'animate-pulse' : ''} ${
-                  showAnimation ? 'animate-bounce' : ''
+                className={`${
+                  piece.isPlaced 
+                    ? 'cursor-default' 
+                    : 'cursor-grab active:cursor-grabbing'
                 }`}
-                style={{
-                  ...getPieceStyle(piece),
-                  animationDelay: showAnimation ? `${index * 0.1}s` : '0s',
-                }}
+                style={getPieceStyle(piece)}
                 viewBox={`${piece.bounds.x} ${piece.bounds.y} ${piece.bounds.width} ${piece.bounds.height}`}
-                onMouseDown={(e) => handleStart(e, piece)}
-                onTouchStart={(e) => handleStart(e, piece)}
+                onMouseDown={piece.isPlaced ? undefined : (e) => handleStart(e, piece)}
+                onTouchStart={piece.isPlaced ? undefined : (e) => handleStart(e, piece)}
               >
                 <defs>
                   <clipPath id={`clip-${piece.id}`}>
@@ -348,8 +353,8 @@ export default function PuzzlePlayScreen() {
                   href={piece.image}
                   x={-col * jigsawConfig.pieceSize}
                   y={-row * jigsawConfig.pieceSize}
-                  width={gridSize * jigsawConfig.pieceSize}
-                  height={gridSize * jigsawConfig.pieceSize}
+                  width="256"
+                  height="256"
                   clipPath={`url(#clip-${piece.id})`}
                   preserveAspectRatio="none"
                 />
@@ -363,67 +368,10 @@ export default function PuzzlePlayScreen() {
             );
           })}
 
-          {/* Full Puzzle Display */}
-          {showFullPuzzle && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-              <img
-                src={MAIN_PUZZLE.image}
-                alt={MAIN_PUZZLE.title}
-                className="w-full h-full object-cover rounded-lg"
-                style={{
-                  animation: animationPhase === 'breaking' ? 'puzzleBreak 2s ease-in-out forwards' : 'none'
-                }}
-              />
-            </div>
-          )}
-
-          {/* Animation overlay */}
-          {showAnimation && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
-              {animationPhase === 'loading' && (
-                <div className="text-center">
-                  <div className="text-white text-2xl font-bold animate-pulse mb-4">
-                    Loading puzzle...
-                  </div>
-                  <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
-                </div>
-              )}
-              {animationPhase === 'full' && (
-                <div className="text-center">
-                  <div className="text-white text-2xl font-bold animate-pulse">
-                    Preparing your puzzle...
-                  </div>
-                </div>
-              )}
-              {animationPhase === 'breaking' && (
-                <div className="text-center">
-                  <div className="text-white text-2xl font-bold animate-bounce mb-4">
-                    Breaking into pieces...
-                  </div>
-                  <div className="flex space-x-2 justify-center">
-                    {Array.from({ length: totalPieces }, (_, i) => (
-                      <div
-                        key={i}
-                        className="w-4 h-4 bg-white rounded-full animate-ping"
-                        style={{ animationDelay: `${i * 0.1}s` }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {animationPhase === 'complete' && (
-                <div className="text-center">
-                  <div className="text-white text-2xl font-bold animate-pulse">
-                    Ready to play! 🧩
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
         {/* Buttons positioned just below puzzle */}
-        <div className="flex justify-between items-center mt-4" style={{ width: gridSize * jigsawConfig.pieceSize }}>
+        <div className="flex justify-between items-center mt-4" style={{ width: '256px' }}>
           <button
             onClick={handleBack}
             className="transform hover:scale-105 transition-all duration-200 active:scale-95"
@@ -431,7 +379,7 @@ export default function PuzzlePlayScreen() {
             <img 
               src="/backbutton.png" 
               alt="Back" 
-              className="w-auto h-12 md:h-14"
+              className="w-auto h-8"
             />
           </button>
           <button
@@ -441,9 +389,10 @@ export default function PuzzlePlayScreen() {
             <img 
               src="/Homebutton.png" 
               alt="Home" 
-              className="w-auto h-12 md:h-14"
+              className="w-auto h-8"
             />
           </button>
+        </div>
         </div>
       </div>
     </div>

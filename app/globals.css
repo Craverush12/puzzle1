@@ -556,9 +556,9 @@ button, input, select, textarea, [role="button"] {
 .info-input {
   background-color: #B3E5FC !important; /* Light cyan background */
   border: none !important;
-  border-radius: 1rem !important;
-  padding: 1.5rem !important;
-  font-size: 1.5rem !important;
+  border-radius: 0.25rem !important;
+  padding: 0.5rem !important;
+  font-size: 1rem !important;
   color: #000 !important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.2s ease !important;
@@ -583,9 +583,9 @@ button, input, select, textarea, [role="button"] {
 .info-dropdown {
   background-color: #B3E5FC !important;
   border: none !important;
-  border-radius: 1rem !important;
-  padding: 1.5rem !important;
-  font-size: 1.5rem !important;
+  border-radius: 0.25rem !important;
+  padding: 0.5rem !important;
+  font-size: 1rem !important;
   color: #666 !important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.2s ease !important;
@@ -610,15 +610,15 @@ button, input, select, textarea, [role="button"] {
 /* Dropdown options */
 .dropdown-options {
   background-color: white !important;
-  border-radius: 1rem !important;
+  border-radius: .25rem !important;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
   border: 1px solid #E0E0E0 !important;
   overflow: hidden;
 }
 
 .dropdown-option {
-  padding: 1.5rem !important;
-  font-size: 1.5rem !important;
+  padding: 1rem !important;
+  font-size: .75rem !important;
   color: #000 !important;
   transition: background-color 0.2s ease !important;
 }

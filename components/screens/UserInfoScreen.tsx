@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAppContext } from '@/components/AppProvider';
+import FunctionalKeyboard from '@/components/FunctionalKeyboard';
 
 const cities: ('Jeddah' | 'Riyadh')[] = [
   'Jeddah', 'Riyadh'
@@ -100,85 +101,99 @@ export default function UserInfoScreen() {
   };
 
   return (
-    <div className="kiosk-container user-info-screen flex flex-col h-full">
-      {/* Title - positioned just below border */}
-      <div className="flex justify-center pt-[5rem] pb-4">
-        <h1 className="text-4xl md:text-5xl font-medium text-white">
-          Enter your info
-        </h1>
-      </div>
+    <div className="kiosk-container user-info-screen flex flex-col items-center justify-center relative">
+      {/* Background Image Container - Centered and constrained */}
+      <div className="flex justify-center h-full w-full relative">
+        <div className="relative h-full" style={{ aspectRatio: '9/16' }}>
+          <img 
+            src="/infoscreen.png" 
+            alt="Info Screen Background" 
+            className="w-full h-full object-contain"
+          />
+          
+          {/* Content Container - Positioned absolutely within the background image */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ padding: '120px 80px' }}>
+            {/* Title - positioned within background image boundaries */}
+          
 
-      {/* Main content area - centered inputs */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6" style={{ paddingBottom: `calc(${showKeyboard ? '350px' : '24px'} * var(--kiosk-scale))` }}>
-        {/* Completion indicator */}
-        {isComplete && (
-          <div className="mb-6 text-center">
-            <div className="text-white text-lg font-semibold animate-pulse">
-              ✓ Form Complete - Proceeding...
-            </div>
-          </div>
-        )}
-        
-        <div className="w-full max-w-md space-y-8">
-          {/* Name Field */}
-          <div>
-            <label className="block text-2xl md:text-3xl font-semibold text-white mb-4">
-              Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              readOnly
-              onClick={handleNameClick}
-              className={`w-full info-input cursor-pointer ${
-                activeInput === 'name' ? 'active' : ''
-              } ${name.trim() ? 'completed' : ''}`}
-              placeholder="Click here to enter your name"
-            />
-          </div>
-
-          {/* City Field */}
-          <div>
-            <label className="block text-2xl md:text-3xl font-semibold text-white mb-4">
-              City
-            </label>
-            <div className="relative city-dropdown-container">
-              <button
-                onClick={handleCityClick}
-                className={`w-full info-dropdown cursor-pointer text-left flex items-center justify-between ${
-                  city ? 'selected completed' : ''
-                }`}
-              >
-                <span>{city || 'Choose your city'}</span>
-                <svg 
-                  className={`w-6 h-6 transition-transform ${showCityDropdown ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+            {/* Main content area - centered inputs within background boundaries */}
+            <div className="flex-1 flex flex-col w-full items-center justify-center mb-8">
+              {/* Completion indicator */}
               
-              {/* Dropdown */}
-              {showCityDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 dropdown-options z-10">
-                  {cities.map(cityName => (
-                    <button
-                      key={cityName}
-                      onClick={() => handleCitySelect(cityName)}
-                      className="w-full dropdown-option text-left"
-                    >
-                      {cityName}
-                    </button>
-                  ))}
+              <div className="w-full max-w-2xl space-y-4" style={{ maxWidth: '90%' }}>
+                {/* Name Field */}
+                <div>
+                  <label className="block text-lg font-medium text-white mb-3">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    readOnly
+                    onClick={handleNameClick}
+                    className={`w-full info-input cursor-pointer text-sm ${
+                      activeInput === 'name' ? 'active' : ''
+                    } ${name.trim() ? 'completed' : ''}`}
+                    placeholder="Click here to enter your name"
+                  />
                 </div>
-              )}
+
+                {/* City Field */}
+                <div>
+                  <label className="block text-lg md:text-xl font-medium text-white mb-3">
+                    City
+                  </label>
+                  <div className="relative city-dropdown-container">
+                    <button
+                      onClick={handleCityClick}
+                      className={`w-full info-dropdown cursor-pointer text-left flex items-center justify-between ${
+                        city ? 'selected completed' : ''
+                      }`}
+                    >
+                      <span>{city || 'Choose your city'}</span>
+                      <svg 
+                        className={`w-6 h-6 transition-transform ${showCityDropdown ? 'rotate-180' : ''}`}
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    
+                    {/* Dropdown */}
+                    {showCityDropdown && (
+                      <div className="absolute top-full left-0 right-0 mt-2 dropdown-options z-10">
+                        {cities.map(cityName => (
+                          <button
+                            key={cityName}
+                            onClick={() => handleCitySelect(cityName)}
+                            className="w-full dropdown-option text-left"
+                          >
+                            {cityName}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* Keyboard Container - Takes up 1/4th of the background image frame */}
+            {showKeyboard && (
+              <div className="absolute bottom-0 left-0 right-0 h-[25%] flex justify-center items-center w-full">
+                <div className="w-full max-w-none" style={{ width: '96%' }}>
+                  <FunctionalKeyboard 
+                    onKeyPress={setKeyboardValue}
+                    currentValue={keyboardValue}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
     </div>
   );
 }

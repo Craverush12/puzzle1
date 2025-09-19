@@ -10,8 +10,8 @@ export default function BorderFrame({ children }: BorderFrameProps) {
   const [shouldShowBorder, setShouldShowBorder] = useState(false);
 
   useEffect(() => {
-    // Always show border for now to test
-    setShouldShowBorder(true);
+    // Hide border for welcome screen
+    setShouldShowBorder(false);
   }, []);
 
   if (!shouldShowBorder) {

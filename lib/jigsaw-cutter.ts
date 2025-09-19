@@ -57,9 +57,15 @@ export function generateJigsawPieces(
   const pieces: JigsawPiece[] = [];
   const totalPieces = config.gridSize * config.gridSize;
   
-  // Calculate board dimensions for scattered placement
-  const boardWidth = Math.max(400, config.gridSize * config.pieceSize + 100);
-  const boardHeight = Math.max(300, config.gridSize * config.pieceSize + 100);
+  // Constrain scattered pieces within the visible puzzle area
+  // The puzzle board is 256px wide, so we need to keep pieces within this area
+  const visibleAreaWidth = 256; // Width of the puzzle board
+  const visibleAreaHeight = 256; // Height of the puzzle board
+  
+  // Calculate available space for scattered pieces (around the puzzle board)
+  // We'll place pieces in a constrained area that fits within the visible screen
+  const scatterAreaWidth = Math.min(visibleAreaWidth, 300); // Max 300px width for scattering
+  const scatterAreaHeight = Math.min(visibleAreaHeight, 300); // Max 300px height for scattering
   
   for (let i = 0; i < totalPieces; i++) {
     const row = Math.floor(i / config.gridSize);
@@ -69,9 +75,13 @@ export function generateJigsawPieces(
     const correctX = col * config.pieceSize;
     const correctY = row * config.pieceSize;
     
-    // Random scattered position on the board (avoiding overlap)
-    const randomX = Math.random() * (boardWidth - config.pieceSize - 20) + 10;
-    const randomY = Math.random() * (boardHeight - config.pieceSize - 20) + 10;
+    // Random scattered position within the constrained visible area
+    // Ensure pieces don't go outside the visible bounds
+    const maxX = Math.max(0, scatterAreaWidth - config.pieceSize - 10);
+    const maxY = Math.max(0, scatterAreaHeight - config.pieceSize - 10);
+    
+    const randomX = Math.random() * maxX + 5;
+    const randomY = Math.random() * maxY + 5;
     
     // Calculate piece bounds
     const bounds = calculatePieceBounds(row, col, config);
@@ -129,8 +139,8 @@ export function getCorrectPiecePosition(
   const col = pieceIndex % config.gridSize;
   
   return {
-    x: col * config.pieceSize,
-    y: row * config.pieceSize
+    x: Math.round(col * config.pieceSize),
+    y: Math.round(row * config.pieceSize)
   };
 }
 

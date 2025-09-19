@@ -2,7 +2,6 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { IBM_Plex_Sans } from 'next/font/google';
 import { AppProvider } from '@/components/AppProvider';
-import BorderFrame from '@/components/BorderFrame';
 import GlobalKeyboard from '@/components/GlobalKeyboard';
 
 const ibmPlexSans = IBM_Plex_Sans({ 
@@ -32,14 +31,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={ibmPlexSans.className}>
         <AppProvider>
-          {/* Main Content with Border Frame */}
-          <BorderFrame>
-            <div className="kiosk-content">
-              {children}
-            </div>
-          </BorderFrame>
+          {/* Main Content */}
+          <div className="kiosk-content">
+            {children}
+          </div>
           
-          {/* Global Keyboard - Rendered outside BorderFrame */}
+          {/* Global Keyboard */}
           <GlobalKeyboard />
         </AppProvider>
       </body>

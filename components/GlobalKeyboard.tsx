@@ -23,8 +23,9 @@ export default function GlobalKeyboard() {
     setActiveInput(null);
   };
 
-  // Only show keyboard on userInfo screen AND when showKeyboard is true
-  if (!showKeyboard || currentScreen !== 'userInfo') {
+  // Don't show keyboard on userInfo screen as it uses custom Group 78.svg keyboard
+  // Only show keyboard on other screens when showKeyboard is true
+  if (!showKeyboard || currentScreen === 'userInfo') {
     return null;
   }
 
