@@ -182,7 +182,7 @@ export default function UserInfoScreen() {
 
             {/* Keyboard Container - Takes up 1/4th of the background image frame */}
             {showKeyboard && (
-              <div className="absolute bottom-0 left-0 right-0 h-[25%] flex justify-center items-center w-full">
+              <div className="absolute bottom-0 left-0 right-0 h-[35%] flex justify-center items-center w-full" >
                 <div className="w-full max-w-none" style={{ width: '96%' }}>
                   <FunctionalKeyboard 
                     onKeyPress={setKeyboardValue}
