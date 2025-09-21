@@ -25,7 +25,7 @@ export default function FunctionalKeyboard({ onKeyPress, currentValue }: Functio
       <img 
         src="/Group 78.svg" 
         alt="Virtual Keyboard" 
-        className="w-full h-full object-contain"
+        className="w-full h-full object-contain object-bottom"
       />
       
       {/* Invisible clickable overlays positioned over each key */}
