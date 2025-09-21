@@ -16,19 +16,19 @@ export default function WelcomeScreen() {
         />
       </div>
 
-      {/* Begin Button - Properly positioned for 2160x3840 screen */}
+      {/* Begin Button - Just below hero image */}
       <button
         onClick={() => setCurrentScreen('userInfo')}
-        className="transform hover:scale-105 transition-all duration-200 active:scale-95 absolute bottom-[20vh]"
+        className="transform hover:scale-105 transition-all duration-200 active:scale-95 absolute bottom-[11rem]"
       >
         <img 
           src="/beginbutton.png" 
           alt="Begin" 
-          className="w-auto h-[12vh] min-h-[200px] max-h-[400px]"
+          className="w-auto h-[2.75rem]"
         />
       </button>
       
-      <p className="text-white text-6xl absolute bottom-[16vh]">
+      <p className="text-white text-xs absolute bottom-[9.5rem]">
         Touch to start
       </p>
 
