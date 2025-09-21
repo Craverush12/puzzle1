@@ -274,6 +274,15 @@ export default function PuzzlePlayScreen() {
           </div>
         </div>
 
+        {/* Reference Image - between name/timer and progress bar */}
+        <div className="flex justify-center mb-8" style={{ width: '288px' }}>
+          <img 
+            src="/puzzle.png" 
+            alt="Puzzle Reference" 
+            className="w-20 h-20 object-contain border border-gray-300 rounded"
+          />
+        </div>
+
         {/* Progress Bar positioned just above puzzle */}
         <div className="mb-4" style={{ width: '288px' }}>
           <div className="w-full h-4 bg-[#002831] rounded-full overflow-hidden">
