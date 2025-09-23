@@ -13,6 +13,7 @@ export default function PuzzlePlayScreen() {
   const [pieces, setPieces] = useState<JigsawPiece[]>([]);
   const [isComplete, setIsComplete] = useState(false);
   const [draggedPiece, setDraggedPiece] = useState<JigsawPiece | null>(null);
+  const [isClient, setIsClient] = useState(false);
   const boardRef = useRef<HTMLDivElement>(null);
 
   // Get difficulty configuration
@@ -28,6 +29,9 @@ export default function PuzzlePlayScreen() {
   };
 
   useEffect(() => {
+    // Set client-side flag
+    setIsClient(true);
+    
     if (!gameStarted) {
       const startTime = Date.now();
       setUserSession({ startTime });
@@ -335,8 +339,15 @@ export default function PuzzlePlayScreen() {
             })}
           </div>
 
-          {/* Puzzle Pieces */}
-          {pieces.map((piece, index) => {
+          {/* Loading state for puzzle pieces */}
+          {!isClient && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-white text-lg">Loading puzzle...</div>
+            </div>
+          )}
+
+          {/* Puzzle Pieces - Only render on client side */}
+          {isClient && pieces.map((piece, index) => {
             const row = Math.floor(piece.correctIndex / gridSize);
             const col = piece.correctIndex % gridSize;
             
