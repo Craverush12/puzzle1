@@ -455,7 +455,8 @@ input::placeholder, textarea::placeholder {
 .number-key,
 .mic-key,
 .space-key,
-.enter-key {
+.enter-key,
+.period-key {
   background-color: var(--keyboard-action-keys) !important; /* action keys - 005E60 */
 }
 
@@ -464,7 +465,8 @@ input::placeholder, textarea::placeholder {
 .number-key:hover,
 .mic-key:hover,
 .space-key:hover,
-.enter-key:hover {
+.enter-key:hover,
+.period-key:hover {
   background-color: #006A6D !important; /* Slightly lighter for hover */
 }
 
@@ -473,7 +475,8 @@ input::placeholder, textarea::placeholder {
 .number-key:active,
 .mic-key:active,
 .space-key:active,
-.enter-key:active {
+.enter-key:active,
+.period-key:active {
   background-color: #004A4D !important; /* Slightly darker for active */
 }
 

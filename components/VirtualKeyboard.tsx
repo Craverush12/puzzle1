@@ -37,6 +37,9 @@ export default function VirtualKeyboard({ onKeyPress, onClose, currentValue, sho
     } else if (key === 'mic') {
       // Microphone key - could be used for voice input in future
       return; // Do nothing for now
+    } else if (key === '.') {
+      // Handle period/dot key specifically
+      newValue = currentValue + '.';
     } else {
       const charToAdd = isShift ? key.toUpperCase() : key.toLowerCase();
       newValue = currentValue + charToAdd;
@@ -116,12 +119,12 @@ export default function VirtualKeyboard({ onKeyPress, onClose, currentValue, sho
         </div>
 
         {/* Bottom row: 123 + Mic + Space + . + Enter */}
-        <div className="flex gap-1 justify-center items-center">
+        <div className="flex gap-1 justify-center items-center w-full">
           {/* 123 key */}
           <button
             onClick={() => setShowNumbers(!showNumbers)}
             className="keyboard-key number-key"
-            style={{ width: '72px' }}
+            style={{ width: '60px', minWidth: '60px' }}
           >
             123
           </button>
@@ -130,17 +133,18 @@ export default function VirtualKeyboard({ onKeyPress, onClose, currentValue, sho
           <button
             onClick={() => handleKeyPress('mic')}
             className="keyboard-key mic-key"
+            style={{ width: '60px', minWidth: '60px' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
             </svg>
           </button>
           
-          {/* Space key - very wide */}
+          {/* Space key - flexible width */}
           <button
             onClick={() => handleKeyPress('space')}
-            className="keyboard-key space-key"
-            style={{ width: '288px' }}
+            className="keyboard-key space-key flex-1"
+            style={{ minWidth: '200px' }}
           >
             space
           </button>
@@ -149,15 +153,16 @@ export default function VirtualKeyboard({ onKeyPress, onClose, currentValue, sho
           <button
             onClick={() => handleKeyPress('.')}
             className="keyboard-key period-key"
+            style={{ width: '60px', minWidth: '60px' }}
           >
             .
           </button>
           
-          {/* Enter key - wider */}
+          {/* Enter key */}
           <button
             onClick={() => handleKeyPress('enter')}
             className="keyboard-key enter-key"
-            style={{ width: '72px' }}
+            style={{ width: '60px', minWidth: '60px' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 7v4H5.83l3.58-3.59L8 6l-6 6 6 6 1.41-1.41L5.83 13H21V7h-2z"/>

@@ -7,6 +7,7 @@ interface FunctionalKeyboardProps {
 
 export default function FunctionalKeyboard({ onKeyPress, currentValue }: FunctionalKeyboardProps) {
   const handleKeyClick = (key: string) => {
+    console.log('Key clicked:', key); // Debug logging
     if (key === 'BACKSPACE') {
       onKeyPress(currentValue.slice(0, -1));
     } else if (key === 'SPACE') {
@@ -14,6 +15,15 @@ export default function FunctionalKeyboard({ onKeyPress, currentValue }: Functio
     } else if (key === 'ENTER') {
       // Handle enter key if needed
       console.log('Enter pressed');
+    } else if (key === 'SHIFT') {
+      // Handle shift key - could toggle case or do nothing
+      console.log('Shift pressed');
+    } else if (key === '123') {
+      // Handle 123 key - could toggle number mode
+      console.log('123 pressed');
+    } else if (key === 'MIC') {
+      // Handle microphone key
+      console.log('Microphone pressed');
     } else {
       onKeyPress(currentValue + key);
     }
@@ -243,7 +253,22 @@ export default function FunctionalKeyboard({ onKeyPress, currentValue }: Functio
           }}
         />
 
-        {/* Row 3 - Z X C V B N M (starting from y=42.1%) */}
+        {/* Row 3 - Shift + Z X C V B N M + Backspace (starting from y=42.1%) */}
+        {/* Shift key - left side */}
+        <button
+          onClick={() => handleKeyClick('SHIFT')}
+          className="absolute bg-transparent hover:bg-white/10 transition-colors cursor-pointer"
+          style={{
+            left: '3.5%',
+            top: '42.1%',
+            width: '12.7%',
+            height: '16.4%',
+            borderRadius: '15px'
+          }}
+        >
+          <span className="text-white text-xs opacity-0 hover:opacity-100">⇧</span>
+        </button>
+        
         <button
           onClick={() => handleKeyClick('Z')}
           className="absolute bg-transparent hover:bg-white/10 transition-colors cursor-pointer"
@@ -320,47 +345,100 @@ export default function FunctionalKeyboard({ onKeyPress, currentValue }: Functio
             height: '16.4%',
             borderRadius: '15px'
           }}
-        />
-
-        {/* Row 4 - Special keys (starting from y=61.5%) */}
-        {/* Backspace */}
+        >
+          <span className="text-white text-xs opacity-0 hover:opacity-100">M</span>
+        </button>
+        
+        {/* Backspace key - right side of third row */}
         <button
           onClick={() => handleKeyClick('BACKSPACE')}
           className="absolute bg-transparent hover:bg-white/10 transition-colors cursor-pointer"
           style={{
-            left: '3.5%',
-            top: '61.5%',
+            left: '83.5%',
+            top: '42.1%',
             width: '12.7%',
             height: '16.4%',
             borderRadius: '15px'
           }}
-        />
+        >
+          <span className="text-white text-xs opacity-0 hover:opacity-100">⌫</span>
+        </button>
+
+        {/* Row 4 - Bottom row: 123 + Mic + Space + Period + Enter (starting from y=61.5%) */}
+        {/* 123 key - far left */}
+        <button
+          onClick={() => handleKeyClick('123')}
+          className="absolute bg-transparent hover:bg-white/10 transition-colors cursor-pointer"
+          style={{
+            left: '3.5%',
+            top: '61.5%',
+            width: '8%',
+            height: '16.4%',
+            borderRadius: '15px'
+          }}
+        >
+          <span className="text-white text-xs opacity-0 hover:opacity-100">123</span>
+        </button>
         
-        {/* Space */}
+        {/* Microphone key */}
+        <button
+          onClick={() => handleKeyClick('MIC')}
+          className="absolute bg-transparent hover:bg-white/10 transition-colors cursor-pointer"
+          style={{
+            left: '13%',
+            top: '61.5%',
+            width: '8%',
+            height: '16.4%',
+            borderRadius: '15px'
+          }}
+        >
+          <span className="text-white text-xs opacity-0 hover:opacity-100">🎤</span>
+        </button>
+        
+        {/* Space key - wide center */}
         <button
           onClick={() => handleKeyClick('SPACE')}
           className="absolute bg-transparent hover:bg-white/10 transition-colors cursor-pointer"
           style={{
-            left: '17.7%',
+            left: '22.5%',
             top: '61.5%',
-            width: '12.7%',
+            width: '45%',
             height: '16.4%',
             borderRadius: '15px'
           }}
-        />
+        >
+          <span className="text-white text-xs opacity-0 hover:opacity-100">space</span>
+        </button>
 
-        {/* Enter */}
+        {/* Period/Dot Button */}
+        <button
+          onClick={() => handleKeyClick('.')}
+          className="absolute bg-transparent hover:bg-white/10 transition-colors cursor-pointer"
+          style={{
+            left: '68.5%',
+            top: '61.5%',
+            width: '8%',
+            height: '16.4%',
+            borderRadius: '15px'
+          }}
+        >
+          <span className="text-white text-xs opacity-0 hover:opacity-100">.</span>
+        </button>
+
+        {/* Enter key - far right */}
         <button
           onClick={() => handleKeyClick('ENTER')}
           className="absolute bg-transparent hover:bg-white/10 transition-colors cursor-pointer"
           style={{
-            left: '27.1%',
+            left: '77.5%',
             top: '61.5%',
-            width: '45.7%',
+            width: '18%',
             height: '16.4%',
             borderRadius: '15px'
           }}
-        />
+        >
+          <span className="text-white text-xs opacity-0 hover:opacity-100">↵</span>
+        </button>
       </div>
     </div>
   );
